@@ -83,7 +83,6 @@ function sampleNPC.onInitAPI()
 end
 
 local counter = 0
-local deathCounter = 0
 local animationLimit = 5
 
 function sampleNPC.onDrawNPC(v)
@@ -95,7 +94,6 @@ function sampleNPC.onDrawNPC(v)
 	    v.animationTimer = 0
 	elseif data.state == STATE_STEPPED then
 	    data.timer = data.timer + 1
-		deathCounter = deathCounter + 1
 	    v.animationFrame = math.floor(lunatime.tick() / 4) % 2 + 1
 		v.animationTimer = 0
 		if data.timer == 1 then
@@ -104,15 +102,6 @@ function sampleNPC.onDrawNPC(v)
 		    v.animationFrame = 3
 			v.animationTimer = 0
 		end
-        if deathCounter == 60 then
-            v:kill(HARM_TYPE_VANISH)
-        elseif deathCounter >= 40 then
-            if lunatime.tick() % 6 < 4 then
-                 v.animationFrame = 3
-            else
-                v.animationFrame = -1
-            end
-        end
 	elseif data.state == STATE_RECOVER then
 	    data.timer = 0
 		v.animationFrame = 4
