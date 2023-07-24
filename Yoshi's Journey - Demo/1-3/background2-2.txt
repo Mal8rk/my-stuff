@@ -1,0 +1,19 @@
+fill-color = #009cff
+
+[sky]
+img="grassyhills_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=800
+
+[mushrooms]
+img="mushrooms_fg_alt.png"
+alignY=BOTTOM
+repeatX=true
+depth=400
+
+[hills]
+img="hills_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=80

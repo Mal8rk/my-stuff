@@ -1,0 +1,12 @@
+width = 32
+height = 32
+gfxwidth = 114
+gfxheight = 143
+gfxoffsetx = 0
+gfxoffsety = 30
+frames = 9
+framestyle = 1
+framespeed = 4
+
+shellID = 872
+nonWingedKoopaID = 871

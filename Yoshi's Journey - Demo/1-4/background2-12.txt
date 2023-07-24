@@ -1,0 +1,25 @@
+fill-color = #398CD6
+
+[waterfall]
+frames=4
+framespeed=6
+startingFrame=1
+img="waterfall.png"
+depth=100
+repeatX=true
+repeatY=true
+alignY=BOTTOM
+
+[purplewaterfall]
+img="waterfall_fg.png"
+depth=110
+repeatX=true
+repeatY=true
+alignY=BOTTOM
+
+[sky]
+img="sunset.png"
+depth=120
+repeatX=true
+repeatY=true
+alignY=BOTTOM

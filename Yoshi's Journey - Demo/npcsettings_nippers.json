@@ -1,0 +1,14 @@
+{
+	"style" : "groupbox",
+	"title" : "Nipper Settings",
+	"layout": [	
+{
+			"control": "checkbox",
+			"name": "type",
+			"title": "Spiny Variant?",
+			"tooltip": "Check to make the Nipper Spore create a spiny Red Nipper Plant.",
+			"text-visible": true,
+			"value-default": false
+		}
+		]
+}

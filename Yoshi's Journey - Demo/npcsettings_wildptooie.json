@@ -1,0 +1,15 @@
+{
+	"style" : "groupbox",
+	"title" : "Wild Ptooie Piranha Plant Settings",
+	"layout": [
+	
+		{
+			"control": "checkbox",
+			"name": "triple",
+			"title": "Triple Shot?",
+			"tooltip": "Check to make it shoot a volley of three Needlenoses. Uncheck for one.",
+			"text-visible": true,
+			"value-default": true
+		}
+		]
+}

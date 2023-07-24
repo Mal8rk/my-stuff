@@ -1,0 +1,13 @@
+{
+    "style": "groupbox",
+    "title": "Message Block Settings",
+    "layout": [
+        {
+            "control": "multiLineEdit",
+            "name": "message",
+            "title": "Message",
+            "tooltip": "The message told to the player when hit.",
+            "value-default": ""
+        }
+    ]
+}

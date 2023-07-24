@@ -1,0 +1,26 @@
+fill-color = #009cff
+
+[birbs]
+frames=8
+framespeed=6
+startingFrame=1
+img="birbs.png"
+depth=80
+speedX=-1
+speedY=-0.20
+repeatX=true
+repeatY=true
+alignY=TOP
+
+
+[hills]
+img="hills_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=100
+
+[bushes]
+img="mushrooms_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=90
