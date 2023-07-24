@@ -82,7 +82,6 @@ function sampleNPC.onInitAPI()
 	--registerEvent(sampleNPC, "onNPCKill")
 end
 
-local counter = 0
 local animationLimit = 5
 
 function sampleNPC.onDrawNPC(v)
@@ -90,10 +89,12 @@ function sampleNPC.onDrawNPC(v)
 
 	if data.state == STATE_IDLE then
 	    data.timer = 0
+		data.deathCounter = 0
 	    v.animationFrame = 0
 	    v.animationTimer = 0
 	elseif data.state == STATE_STEPPED then
 	    data.timer = data.timer + 1
+		data.deathCounter = data.deathCounter + 1
 	    v.animationFrame = math.floor(lunatime.tick() / 4) % 2 + 1
 		v.animationTimer = 0
 		if data.timer == 1 then
@@ -102,6 +103,15 @@ function sampleNPC.onDrawNPC(v)
 		    v.animationFrame = 3
 			v.animationTimer = 0
 		end
+        if data.deathCounter == 60 then
+            v:kill(HARM_TYPE_VANISH)
+        elseif data.deathCounter >= 40 then
+            if lunatime.tick() % 6 < 4 then
+                v.animationFrame = 3
+            else
+                v.animationFrame = -1
+            end
+        end
 	elseif data.state == STATE_RECOVER then
 	    data.timer = 0
 		v.animationFrame = 4
@@ -130,6 +140,8 @@ function sampleNPC.onTickNPC(v)
 		data.pressed = false
 		data.timer = 0
 		data.moveTimer = 0
+		data.counter = 0
+		data.deathCounter = 0
 	end
 
 	--Most of the code taken from MDA's Number Platforms
@@ -162,14 +174,14 @@ function sampleNPC.onTickNPC(v)
 	
 	if data.pressed and isPressed then
 		data.state = STATE_STEPPED
-	    if not v.dontMove == true then
+	    if not v.dontMove and player.standingNPC == v then
 	         v.speedY = -0.4
 			 player.x = player.x + math.sin(data.moveTimer * 0.05) * 0.6
 	    end
-		counter = 0
+		data.counter = 0
 	elseif not data.pressed and not isPressed then
 		data.state = STATE_IDLE
-		counter = 0
+		data.counter = 0
 	else
 		if data.pressed then
 			data.state = STATE_RECOVER
@@ -177,11 +189,11 @@ function sampleNPC.onTickNPC(v)
 			data.state = STATE_STEPPED
 		end
 
-		if counter == animationLimit then
-			counter = 0
+		if data.counter == animationLimit then
+			data.counter = 0
 			data.pressed = isPressed
 		else
-			counter = counter + 1
+			data.counter = data.counter + 1
 		end
 	end	
 end
