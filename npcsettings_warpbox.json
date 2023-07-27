@@ -1,0 +1,25 @@
+{
+	"style" : "groupbox",
+	"title" : "Warp Box Settings",
+	"layout": [
+		{
+			"control": "spinbox",
+			"name": "boxid",
+			"title": "Warp Box ID",
+			"tooltip": "ID used to link a Warp Box Entrance to its corresponding Exit.",
+			"type": "int",
+			"value-default": 1,
+			"value-min": 1,
+			"value-max": 99
+		},
+		{
+			"control": "checkbox",
+			"name": "oneUseOnly",
+			"title": "One use only?",
+			"tooltip": "Causes the Warp Box to disappear after it is used once.",
+			"text-visible": true,
+			"value-default": true
+		}
+	]
+}
+
