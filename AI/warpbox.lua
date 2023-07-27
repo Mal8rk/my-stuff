@@ -1,5 +1,5 @@
-local enterSFX = Audio.SfxOpen(Misc.resolveFile("sounds/warpbox-entrance.ogg"))
-local exitSFX = Audio.SfxOpen(Misc.resolveFile("sounds/warpbox-exit.ogg"))
+local enterSFX = Audio.SfxOpen(Misc.resolveFile("warpbox-entrance.ogg"))
+local exitSFX = Audio.SfxOpen(Misc.resolveFile("warpbox-exit.ogg"))
 
 local warpBox = {}
 
