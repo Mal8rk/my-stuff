@@ -128,7 +128,7 @@ function sampleNPC.onTickEndNPC(v)
     if Defines.levelFreeze then return end
 
 	if v:mem(0x12A, FIELD_WORD) <= 0 then return end --offscreen
-	if v:mem(0x12C, FIELD_WORD) > 0 or v:mem(0x136, FIELD_BOOL) or v:mem(0x138, FIELD_WORD) > 0 then 
+	if not v:mem(0x12C, FIELD_WORD) > 0 or v:mem(0x136, FIELD_BOOL) or v:mem(0x138, FIELD_WORD) > 0 then 
 		for _, p in ipairs(Player.get()) do
 			doCollision(p, v)
 		end
