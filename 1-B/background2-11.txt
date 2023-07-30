@@ -1,0 +1,23 @@
+fill-color = #009cff
+
+[hills]
+img="grassyhills_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=600
+
+[grass]
+img="grassyhills_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=90
+
+[happylouds]
+img="happyclouds_fg.png"
+alignY=BOTTOM
+repeatX=true
+repeatY=true
+depth=100
+speedX=-0.15
+opacity=1
+y=-48
