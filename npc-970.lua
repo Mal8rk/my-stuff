@@ -28,7 +28,7 @@ local sampleNPCSettings = {
 	playerblock = false,
 	playerblocktop = false,
 
-	nohurt=false,
+	nohurt=true,
 	nogravity = false,
 	noblockcollision = false,
 	nofireball = true,
@@ -74,11 +74,148 @@ npcManager.registerHarmTypes(npcID,
 	}
 );
 
-
+local STATE_WALKING = 0
+local STATE_JUMP = 1
+local STATE_HASTY = 2
+local STATE_FLIP = 3
 
 function sampleNPC.onInitAPI()
 	npcManager.registerEvent(npcID, sampleNPC, "onTickEndNPC")
 	npcManager.registerEvent(npcID, sampleNPC, "onDrawNPC")
+end
+
+local function doSquish(v)
+	local data = v.data
+	local config = NPC.config[v.id]
+
+	if v.collidesBlockBottom then
+		data.timer = data.timer + 1
+		--Squash an stretch the sprite a bit to make it look like it's... dancing?
+		if data.timer <= 16 then
+				
+			--Timer move up and down, the one controlling horizontal squishing is twice as fast as the one controlling the up and down
+			data.squishTimer = data.squishTimer + 0.3
+			data.stretchTimer = data.stretchTimer - 0.78
+				
+			--Set the horizontal squishing to -12 to a frame, to give it a "bob" effect
+			if data.timer == 10 then
+				data.stretchTimer = -10
+				data.squishTimer = 2
+			end	
+		elseif data.timer > 16 and data.timer <= 30 then
+			
+			data.squishTimer = data.squishTimer - 0.5
+			data.stretchTimer = data.stretchTimer + 1
+				
+			--Similarly here, set it to -8
+			if data.timer == 20 then
+				data.stretchTimer = 8
+			end
+		else
+			--Set the timer to -4, to finish the animation and reset it.
+			if data.timer >= 31 then
+				data.timer = -8
+			end
+		end			
+	else
+		data.timer = 0
+		data.stretchTimer = 0
+		data.squishTimer = 0
+	end
+end
+
+local function doCollision(p, v)
+	if Colliders.collide(p, v) and not v.friendly and p:mem(0x13E, FIELD_WORD) == 0 then
+		p:mem(0x40, FIELD_WORD, 0) --player climbing state, if he's climbing then have him stop climbing
+		Audio.playSFX(24) --bump sound
+		p.speedX = Defines.player_runspeed
+		if p.x < v.x then
+			p.speedX = p.speedX * -1
+		end
+	end
+end
+
+function sampleNPC.onTickEndNPC(v)
+	if Defines.levelFreeze then return end
+	
+	local data = v.data
+	local config = NPC.config[v.id]
+	v.animationTimer = 0
+	
+	if v.despawnTimer <= 0 then
+		data.initialized = false
+		return
+	end
+
+	if not data.initialized then
+		data.initialized = true
+		data.squishTimer = 0
+		data.stretchTimer = 0
+		data.timer = data.timer or 0
+		data.state = STATE_WALKING
+		data.stateTimer = 0
+	end
+
+	if v:mem(0x12C, FIELD_WORD) > 0
+	or v:mem(0x136, FIELD_BOOL)
+	or v:mem(0x138, FIELD_WORD) > 0
+	then
+	    data.squishTimer = 0
+		data.stretchTimer = 0
+	end
+
+	for _, p in ipairs(Player.get()) do
+		doCollision(p, v)
+	end
+
+	if data.state == STATE_WALKING then
+	    data.stateTimer = data.stateTimer + 1
+		npcutils.faceNearestPlayer(v)
+	    v.speedX = sampleNPCSettings.speed * v.direction
+		v.animationFrame = math.floor(lunatime.tick() / 6) % 10
+
+		if data.stateTimer >= 120 then
+		    data.state = STATE_JUMP
+			data.stateTimer = 0
+			v.speedX = 0
+		end
+	elseif data.state == STATE_JUMP then
+	    data.stateTimer = data.stateTimer + 1
+		if data.stateTimer >= 1 and data.stateTimer < 20 then
+		    v.animationFrame = 3
+			doSquish(v)
+		elseif data.stateTimer == 20 then
+		    v.speedX = sampleNPCSettings.speed * v.direction
+			v.speedY = -14
+			v.animationFrame = 0
+			SFX.play(24)
+			data.timer = 0
+			data.squishTimer = 0
+			data.stretchTimer = 0
+		elseif data.stateTimer >= 136 and data.stateTimer <= 166 then
+			doSquish(v)
+			if data.stateTimer == 136 and v.collidesBlockBottom then
+			    Defines.earthquake = 7
+				v.speedX = 0
+				SFX.play(37)
+				v.animationFrame = 3
+				v.animationTimer = 0
+			elseif data.stateTimer == 166 then
+				data.timer = 0
+				data.stretchTimer = 0
+				data.squishTimer = 0
+			end
+		elseif data.stateTimer == 200 then
+		    data.state = STATE_WALKING
+			data.stateTimer = 0
+		end
+	end
+
+	-- animation controlling
+	v.animationFrame = npcutils.getFrameByFramestyle(v, {
+		frame = data.frame,
+		frames = sampleNPCSettings.frames
+	});
 end
 
 local function drawSprite(args) -- handy function to draw sprites
@@ -108,43 +245,11 @@ local function drawSprite(args) -- handy function to draw sprites
 	sprite:draw{priority = args.priority,color = args.color,sceneCoords = args.sceneCoords or args.scene}
 end
 
-function sampleNPC.onTickEndNPC(v)
-	if Defines.levelFreeze then return end
-	
-	local data = v.data
-	local config = NPC.config[v.id]
-	
-	if v.despawnTimer <= 0 then
-		data.initialized = false
-		return
-	end
-
-	if not data.initialized then
-		data.initialized = true
-	end
-
-	if v:mem(0x12A, FIELD_WORD) <= 0 then
-		data.rotation = nil
-		return
-	end
-
-	if not data.rotation then
-		data.rotation = 0
-	end
-
-	if v:mem(0x12C, FIELD_WORD) > 0
-	or v:mem(0x136, FIELD_BOOL)
-	or v:mem(0x138, FIELD_WORD) > 0
-	then data.rotation = 0 return end
-
-    data.rotation = ((data.rotation or 0) + math.deg((v.speedX*config.speed)/((v.width+v.height)/4)))
-end
-
 function sampleNPC.onDrawNPC(v)
 	local config = NPC.config[v.id]
 	local data = v.data
 
-	if v:mem(0x12A,FIELD_WORD) <= 0 or not data.rotation or data.rotation == 0 then return end
+	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
 
 	local priority = -45
 	if config.priority then
@@ -154,8 +259,8 @@ function sampleNPC.onDrawNPC(v)
 	drawSprite{
 		texture = Graphics.sprites.npc[v.id].img,
 
-		x = v.x+(v.width/2)+config.gfxoffsetx,y = v.y+v.height-(config.gfxheight/2)+config.gfxoffsety,
-		width = config.gfxwidth,height = config.gfxheight,
+		x = (v.x - data.stretchTimer)+(v.width/2)+config.gfxoffsetx + data.stretchTimer,y = v.y+v.height-(config.gfxheight/2)+config.gfxoffsety + data.squishTimer * 2,
+		width = config.gfxwidth - data.stretchTimer,height = config.gfxheight - data.squishTimer * 4,
 
 		sourceX = 0,sourceY = v.animationFrame*config.gfxheight,
 		sourceWidth = config.gfxwidth,sourceHeight = config.gfxheight,
