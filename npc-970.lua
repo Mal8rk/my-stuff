@@ -164,15 +164,14 @@ function sampleNPC.onTickEndNPC(v)
 		data.stretchTimer = 0
 	end
 
-	for _, p in ipairs(Player.get()) do
-		doCollision(p, v)
-	end
-
 	if data.state == STATE_WALKING then
 	    data.stateTimer = data.stateTimer + 1
 		npcutils.faceNearestPlayer(v)
 	    v.speedX = sampleNPCSettings.speed * v.direction
 		v.animationFrame = math.floor(lunatime.tick() / 6) % 10
+	    for _, p in ipairs(Player.get()) do
+		    doCollision(p, v)
+	    end
 
 		if data.stateTimer >= 120 then
 		    data.state = STATE_JUMP
@@ -196,6 +195,7 @@ function sampleNPC.onTickEndNPC(v)
 			doSquish(v)
 			if data.stateTimer == 136 and v.collidesBlockBottom then
 			    Defines.earthquake = 7
+				local npc = NPC.spawn(880, Camera.get()[1].x + RNG.randomInt(-536, 800), Camera.get()[1].y + 1 * 10 - 60, player.section)
 				v.speedX = 0
 				SFX.play(37)
 				v.animationFrame = 3

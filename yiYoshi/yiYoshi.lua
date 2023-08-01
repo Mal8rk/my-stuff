@@ -1290,7 +1290,6 @@ do
         [759] = NPC_TONGUE_BEHAVIOUR.STOP,            -- chain chomp
         [760] = NPC_TONGUE_BEHAVIOUR.STOP,            -- loose chain chomp
         [780] = NPC_TONGUE_BEHAVIOUR.STOP,            -- giant chain chomp
-        [880] = NPC_TONGUE_BEHAVIOUR.NO_EGG,          -- marching milde
 
         -- the npc's that should really have noyoshi but just don't
         [199] = NPC_TONGUE_BEHAVIOUR.STOP,           -- blargg
