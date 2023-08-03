@@ -2473,7 +2473,7 @@ do
                 if npc.id == 263 then -- ice block
                     npc:harm(HARM_TYPE_FROMBELOW)
                 else
-                    npc:harm(HARM_TYPE_NPC)
+                    npc:harm(HARM_TYPE_SPINJUMP)
                 end
             end
         end

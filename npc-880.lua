@@ -83,7 +83,7 @@ end
 local function doCollision(p, v)
 	if Colliders.collide(p, v) and not v.friendly and p:mem(0x13E, FIELD_WORD) == 0 then
 		p:mem(0x40, FIELD_WORD, 0) --player climbing state, if he's climbing then have him stop climbing
-		Audio.playSFX(24) --bump sound
+		Audio.playSFX("duou.ogg") --bump sound
 		p.speedX = Defines.player_runspeed
 		if p.x < v.x then
 			p.speedX = p.speedX * -1
