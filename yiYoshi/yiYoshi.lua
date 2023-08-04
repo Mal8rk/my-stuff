@@ -1290,6 +1290,7 @@ do
         [759] = NPC_TONGUE_BEHAVIOUR.STOP,            -- chain chomp
         [760] = NPC_TONGUE_BEHAVIOUR.STOP,            -- loose chain chomp
         [780] = NPC_TONGUE_BEHAVIOUR.STOP,            -- giant chain chomp
+        [971] = NPC_TONGUE_BEHAVIOUR.PASSES_THROUGH,          -- boss key
 
         -- the npc's that should really have noyoshi but just don't
         [199] = NPC_TONGUE_BEHAVIOUR.STOP,           -- blargg
@@ -2665,6 +2666,8 @@ do
         shotAir = {3, defaultFrameY = 64,frameDelay = 6,loops = false,noMouthNPCChange = true},
         shotCanHold = {1,2, defaultFrameY = 64,frameDelay = 4,noMouthNPCChange = true},
         shotAirCanHold = {3,4, defaultFrameY = 64,frameDelay = 4,noMouthNPCChange = true},
+
+        stunned = {1, defaultFrameY = 65,noMouthNPCChange = true},
     }
 
     yoshi.babyAnimations = {
@@ -3022,7 +3025,7 @@ do
 
         -- Stunned by a sledge bro
         if playerstun.isStunned(p.idx) then
-            return "idle"
+            return "stunned"
         end
 
 

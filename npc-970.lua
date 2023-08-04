@@ -5,6 +5,12 @@ local sampleNPC = {}
 
 local npcID = NPC_ID
 
+local defeatEffectSound = Misc.resolveSoundFile("defeatEffect")
+local smwbossdefeat = Misc.resolveFile("smw-boss-defeat.wav")
+local smwbosspoof = Misc.resolveFile("smw-boss-poof.wav")
+
+local defeatEffects = {}
+
 local sampleNPCSettings = {
 	id = npcID,
 
@@ -17,7 +23,7 @@ local sampleNPCSettings = {
 	gfxoffsetx = 0,
 	gfxoffsety = 0,
 
-	frames = 12,
+	frames = 13,
 	framestyle = 1,
 	framespeed = 6,
 
@@ -50,7 +56,7 @@ npcManager.setNpcSettings(sampleNPCSettings)
 
 npcManager.registerHarmTypes(npcID,
 	{
-		--HARM_TYPE_JUMP,
+		HARM_TYPE_JUMP,
 		--HARM_TYPE_FROMBELOW,
 		HARM_TYPE_NPC,
 		--HARM_TYPE_PROJECTILE_USED,
@@ -58,7 +64,7 @@ npcManager.registerHarmTypes(npcID,
 		--HARM_TYPE_HELD,
 		--HARM_TYPE_TAIL,
 		HARM_TYPE_SPINJUMP,
-		--HARM_TYPE_OFFSCREEN,
+		HARM_TYPE_OFFSCREEN,
 		--HARM_TYPE_SWORD
 	}, 
 	{
@@ -70,7 +76,7 @@ npcManager.registerHarmTypes(npcID,
 		--[HARM_TYPE_HELD]=10,
 		--[HARM_TYPE_TAIL]=10,
 		[HARM_TYPE_SPINJUMP]=10,
-		--[HARM_TYPE_OFFSCREEN]=10,
+		--[HARM_TYPE_OFFSCREEN]=753,
 		--[HARM_TYPE_SWORD]=10,
 	}
 );
@@ -81,6 +87,7 @@ local STATE_GROUNDPOUND = 2
 local STATE_FLIP = 3
 local STATE_HURT = 4
 local STATE_DEAD = 5
+local STATE_RECOVER = 6
 
 function sampleNPC.onInitAPI()
 	npcManager.registerEvent(npcID, sampleNPC, "onTickEndNPC")
@@ -144,6 +151,19 @@ local function doHurtSquish(v)
 	end
 end
 
+local function deathEffect(v)
+    table.insert(defeatEffects,{
+	    x = v.x + v.width*0.5,
+		y = v.y + v.height*0.5,
+
+	    timer = 0,
+		radius = 0,
+		opacity = 1,
+    })
+
+	SFX.play(defeatEffectSound)
+end
+
 local function doCollision(p, v)
 	if Colliders.collide(p, v) and not v.friendly and p:mem(0x13E, FIELD_WORD) == 0 then
 		p:mem(0x40, FIELD_WORD, 0) --player climbing state, if he's climbing then have him stop climbing
@@ -176,6 +196,9 @@ function sampleNPC.onTickEndNPC(v)
 		data.state = STATE_WALKING
 		data.stateTimer = 0
 		data.rotation = 0
+		data.shakeX = 0
+		data.shakeY = 0
+		data.health = 3
 	end
 
 	if v:mem(0x12C, FIELD_WORD) > 0
@@ -249,7 +272,15 @@ function sampleNPC.onTickEndNPC(v)
 		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
 	    elseif data.stateTimer == 22 then
 		    v.speedX = 0
-        end
+		elseif data.stateTimer > 200 and data.stateTimer <= 310 then
+			if data.shakeY == 2 then
+				data.shakeY = 0
+				v.y = v.y + 1
+			else
+				data.shakeY = 2
+				v.y = v.y - 1
+			end
+		end
 	elseif data.state == STATE_HURT then
 	    data.stateTimer = data.stateTimer + 1
 		if data.stateTimer >= 1 and data.stateTimer < 50 then
@@ -264,25 +295,70 @@ function sampleNPC.onTickEndNPC(v)
 			v.speedY = -5.5
 	    elseif data.stateTimer >= 53 and data.stateTimer <= 64 then
 		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
-		elseif data.stateTimer >= 82 and data.stateTimer <= 95 then
+		elseif data.stateTimer >= 94 and data.stateTimer <= 115 then
 			doSquish(v)
-			if data.stateTimer == 82 and v.collidesBlockBottom then
+			if data.stateTimer == 94 and v.collidesBlockBottom then
 				SFX.play(37)
 				v.animationFrame = 3
 				v.animationTimer = 0
-			elseif data.stateTimer == 95 then
+			elseif data.stateTimer == 115 then
 				data.timer = 0
 				data.stretchTimer = 0
 				data.squishTimer = 0
 			end
+		elseif data.stateTimer == 160 then
+		    data.state = STATE_WALKING
+			data.stateTimer = 0
+		end
+	elseif data.state == STATE_DEAD then
+	    data.stateTimer = data.stateTimer + 1
+		Audio.MusicFadeOut(player.section, 200)
+		v.friendly = true
+		if data.stateTimer >= 1 and data.stateTimer < 50 then
+		    data.rotation = 180 * v.direction
+		    v.animationFrame = math.floor(data.stateTimer / 5) % 2 + 10
+			doHurtSquish(v)
+		elseif data.stateTimer == 52 then
+			data.timer = 0
+			data.stretchTimer = 0
+			data.squishTimer = 0
+			v.animationFrame = 12
+			v.speedY = -5.5
+	    elseif data.stateTimer >= 53 and data.stateTimer <= 64 then
+		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
+		elseif data.stateTimer >= 94 and data.stateTimer <= 115 then
+			doSquish(v)
+			if data.stateTimer == 94 and v.collidesBlockBottom then
+				SFX.play(37)
+				v.animationFrame = 12
+				v.animationTimer = 0
+			elseif data.stateTimer == 115 then
+				data.timer = 0
+				data.stretchTimer = 0
+				data.squishTimer = 0
+			end
+		elseif data.stateTimer == 180 then
+		    deathEffect(v)
+		elseif data.stateTimer == 260 then
+		    deathEffect(v)
+		elseif data.stateTimer >= 350 and data.stateTimer <= 370 then
+		    data.squishTimer = data.squishTimer - 1
+			data.stretchTimer = data.stretchTimer - 3.5
+			if data.stateTimer == 351 then
+			    SFX.play(smwbossdefeat)
+			end
+		elseif data.stateTimer >= 371 and data.stateTimer <= 536 then
+		    data.squishTimer = data.squishTimer + 0.3
+			data.stretchTimer = data.stretchTimer + 1.1
+			data.rotation = ((data.rotation or 0) + math.deg((6 * v.direction)/((v.width+v.height)/-6)))
+		elseif data.stateTimer == 537 then
+		    SFX.play(smwbosspoof)
+			v:kill(HARM_TYPE_OFFSCREEN)
+			Effect.spawn(753, v.x + 48, v.y + 80)
+			local npc = NPC.spawn(971, v.x + 32, v.y + 32)
+			npc.speedY = -8
 		end
 	end
-
-	-- animation controlling
-	v.animationFrame = npcutils.getFrameByFramestyle(v, {
-		frame = data.frame,
-		frames = sampleNPCSettings.frames
-	});
 end
 
 function sampleNPC.onNPCHarm(eventObj, v, reason, culprit)
@@ -291,33 +367,45 @@ function sampleNPC.onNPCHarm(eventObj, v, reason, culprit)
 	eventObj.cancelled = true
 
     if culprit then
-        if data.state == STATE_FLIP and reason == HARM_TYPE_SPINJUMP and type(culprit) == "Player" then
-			if (culprit.x + 0.5 * culprit.width) < (v.x + v.width*0.5) then
-				culprit.speedX = -14
-			else
-				culprit.speedX = 14
-			end
+        if data.state == STATE_FLIP and (reason == HARM_TYPE_JUMP or reason == HARM_TYPE_SPINJUMP) and type(culprit) == "Player" then
+		    if culprit.x+culprit.width*0.5 < v.x+v.width*0.5 then
+			    culprit.speedX = -4.5
+		    else
+			    culprit.speedX = 4.5
+		    end
+		    data.health = data.health - 1
 		    data.state = STATE_HURT
 			data.stateTimer = 0
 			SFX.play(39)
 		end
     else
         for _,p in ipairs(NPC.getIntersecting(v.x - 12, v.y - 12, v.x + v.width + 12, v.y + v.height + 12)) do
-            if p.id == 953 then
+            if data.state == STATE_WALKING and p.id == 953 then
                 p:kill(HARM_TYPE_VANISH)
                 data.state = STATE_FLIP
 				data.stateTimer = 0
 				SFX.play(2)
 			    if p.x <= v.x then
-				    v.direction = 1
-			    else
 				    v.direction = -1
+			    else
+				    v.direction = 1
 			    end
                 v.speedX = 3 * v.direction
 				v.speedY = -3
             end
         end
     end
+	if data.health <= 0 then
+        data.state = STATE_DEAD
+		data.stateTimer = 0
+		eventObj.cancelled = true
+	end
+
+	-- animation controlling
+	v.animationFrame = npcutils.getFrameByFramestyle(v, {
+		frame = data.frame,
+		frames = sampleNPCSettings.frames
+	});
 end
 
 local function drawSprite(args) -- handy function to draw sprites
@@ -350,7 +438,6 @@ end
 function sampleNPC.onDrawNPC(v)
 	local config = NPC.config[v.id]
 	local data = v.data
-	Text.print(data.stateTimer, 8, 8)
 
 	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
 
@@ -373,6 +460,46 @@ function sampleNPC.onDrawNPC(v)
 	}
 
 	npcutils.hideNPC(v)
+
+	for i = #defeatEffects, 1, -1 do
+		local effect = defeatEffects[i]
+
+		if effect.emitter == nil then
+			effect.emitter = Particles.Emitter(effect.x,effect.y,Misc.resolveFile("defeatParticle.ini"))
+			effect.emitter.enabled = false
+
+			effect.emitter:emit(25)
+
+			local particles = effect.emitter.particles
+
+			for index,particle in ipairs(particles) do
+				local speed = vector(0,-9):rotate((index-1) / (#particles) * 360)
+
+				particle.initSpeedX = speed.x
+				particle.initSpeedY = speed.y
+			end
+		end
+
+		effect.timer = effect.timer + 1
+
+		effect.radius = effect.radius + (68 - effect.timer) * 0.2
+		effect.opacity = math.clamp((68 - effect.timer) / 24)
+
+		if effect.opacity > 0 then
+			local color = Color.fromHSV((lunatime.drawtick()/224) % 1,0.8,0.9).. (effect.opacity * 0.5)
+
+			Graphics.drawCircle{
+				x = effect.x,y = effect.y,radius = effect.radius,priority = -4,sceneCoords = true,color = color,
+			}
+		end
+
+		effect.emitter:Draw(-4,true,nil,true,nil,nil,true)
+
+
+		if effect.opacity == 0 and effect.emitter:Count() == 0 then
+			table.remove(defeatEffects,i)
+		end
+	end
 end
 
 return sampleNPC
