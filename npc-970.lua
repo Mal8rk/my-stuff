@@ -307,6 +307,33 @@ function sampleNPC.onTickEndNPC(v)
 				data.squishTimer = 0
 			end
 		elseif data.stateTimer == 160 then
+		    data.state = STATE_GROUNDPOUND
+			data.stateTimer = 0
+		end
+    elseif data.state == STATE_GROUNDPOUND then
+	    data.stateTimer = data.stateTimer + 1
+		if data.stateTimer >= 1 and data.stateTimer < 20 then
+		    v.animationFrame = 3
+			doSquish(v)
+		elseif data.stateTimer == 20 then
+			v.speedY = -14
+			v.animationFrame = 0
+			SFX.play(24)
+			data.timer = 0
+			data.squishTimer = 0
+			data.stretchTimer = 0
+		elseif data.stateTimer >= 74 and data.stateTimer <= 166 then
+		    v.nogravity = true
+			if data.stateTimer >= 75 and data.stateTimer <= 99 then
+		        data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
+			elseif data.stateTimer == 120 then
+			    v.speedY = 6
+			elseif data.stateTimer == 166 then
+				data.timer = 0
+				data.stretchTimer = 0
+				data.squishTimer = 0
+			end
+		elseif data.stateTimer == 200 then
 		    data.state = STATE_WALKING
 			data.stateTimer = 0
 		end
@@ -359,6 +386,12 @@ function sampleNPC.onTickEndNPC(v)
 			npc.speedY = -8
 		end
 	end
+
+	-- animation controlling
+	v.animationFrame = npcutils.getFrameByFramestyle(v, {
+		frame = data.frame,
+		frames = sampleNPCSettings.frames
+	});
 end
 
 function sampleNPC.onNPCHarm(eventObj, v, reason, culprit)
@@ -400,12 +433,6 @@ function sampleNPC.onNPCHarm(eventObj, v, reason, culprit)
 		data.stateTimer = 0
 		eventObj.cancelled = true
 	end
-
-	-- animation controlling
-	v.animationFrame = npcutils.getFrameByFramestyle(v, {
-		frame = data.frame,
-		frames = sampleNPCSettings.frames
-	});
 end
 
 local function drawSprite(args) -- handy function to draw sprites
@@ -438,6 +465,7 @@ end
 function sampleNPC.onDrawNPC(v)
 	local config = NPC.config[v.id]
 	local data = v.data
+	Text.print(data.stateTimer, 8, 8)
 
 	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
 

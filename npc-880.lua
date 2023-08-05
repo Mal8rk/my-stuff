@@ -1,4 +1,5 @@
 local npcManager = require("npcManager")
+local paletteChange = require("paletteChange")
 
 local sampleNPC = {}
 
@@ -78,6 +79,7 @@ npcManager.registerHarmTypes(npcID,
 
 function sampleNPC.onInitAPI()
 	npcManager.registerEvent(npcID, sampleNPC, "onTickNPC")
+	npcManager.registerEvent(npcID, sampleNPC, "onDrawNPC")
 end
 
 local function doCollision(p, v)
@@ -93,6 +95,9 @@ end
 
 function sampleNPC.onTickNPC(v)
 
+    local data = v.data
+    local settings = v.data._settings
+
     if Defines.levelFreeze then return end
 
 	if v:mem(0x12A, FIELD_WORD) <= 0 then return end --offscreen
@@ -107,13 +112,97 @@ function sampleNPC.onTickNPC(v)
 		doCollision(p, v)
 	end
 
+	--Initialize
+	if not data.initialized then
+		--Initialize necessary data.
+		data.initialized = true
+		data.timer = 0
+		data.palette = 0
+		data.scale = 0
+	end
+
 	--do not show the smoke effect that appears when you jump on the npc
 	for _, e in ipairs(Animation.getIntersecting(v.x, v.y, v.x + 32, v.y + 32)) do
 		e.width = 0
 		e.height = 0
 	end
 
-	v.speedX = sampleNPCSettings.speed * v.direction
+	data.timer = data.timer + 1
+
+    if settings.type == 0 then
+	    v.speedX = NPC.config[npcID].speed * v.direction
+		data.timer = 0
+	elseif settings.type == 1 then
+	    v.speedX = NPC.config[npcID].speed * v.direction
+		if data.timer >= 160 then
+		    data.palette = 0
+		    v.animationFrame = 2
+			v.animationTimer = 0
+			v.speedX = 0
+		elseif data.timer <= 400 then
+		    data.palette = 1
+		end
+	end
+
+	if not Defines.levelFreeze then
+		if data.palette > 0 and lunatime.tick()%6 == 0 then
+			data.palette = (data.palette % 15) + 1
+		end
+	end
+end
+
+local scalingBuffer = Graphics.CaptureBuffer(32,32)
+
+local RENDER_SCALE = 0.5
+
+function sampleNPC.onDrawNPC(v)
+	if v.despawnTimer <= 0 or v.isHidden then return end
+
+    local data = v.data
+    local settings = v.data._settings
+
+	Text.print(settings.type, 8, 8)
+	Text.print(data.timer, 8, 32)
+
+	if not data.initialized then return end
+
+	local config = NPC.config[v.id]
+
+	if data.sprite == nil then
+		data.sprite = Sprite{texture = Graphics.sprites.npc[v.id].img,frames = config.frames,pivot = Sprite.align.CENTRE}
+	end
+
+	local priority = -44
+	
+	local noiseTexture = Graphics.sprites.hardcoded["53-0"].img
+
+
+	scalingBuffer:clear(priority)
+	--Graphics.drawBox{target = scalingBuffer,x = 0,y = 0,width = scalingBuffer.width,height = scalingBuffer.height,priority = priority,color = Color.purple}
+
+	data.sprite.x = scalingBuffer.width
+	data.sprite.y = scalingBuffer.height
+	data.sprite.scale = vector(RENDER_SCALE * data.scale,RENDER_SCALE * data.scale)
+
+	data.sprite:draw{frame = data.frame,priority = priority,target = scalingBuffer,shader = mainShader,uniforms = {
+		noiseTexture = noiseTexture,
+		noiseSize = vector(noiseTexture.width,noiseTexture.height),
+		teleportFade = data.teleportFade,
+
+		imageSize = vector(Graphics.sprites.npc[v.id].img.width,Graphics.sprites.npc[v.id].img.height),
+		frames = vector(1,data.sprite.frames),
+	}}
+
+	local shader,uniforms = paletteChange.getShaderAndUniforms(data.palette, "palette.png")
+
+	Graphics.drawBox{
+		texture = scalingBuffer,centred = true,sceneCoords = true,priority = priority,
+		x = v.x + v.width*0.5 + config.gfxoffsetx,
+		y = v.y + v.height - (Graphics.sprites.npc[v.id].img.height / config.frames)*0.5 + config.gfxoffsety + ((lunatime.tick() % 2) - 0.5)*2,
+		width = (scalingBuffer.width / RENDER_SCALE) * -v.direction,height = scalingBuffer.height / RENDER_SCALE,
+		sourceWidth = scalingBuffer.width,sourceHeight = scalingBuffer.height,
+		shader = shader,uniforms = uniforms,
+	}
 end
 
 return sampleNPC

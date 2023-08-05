@@ -4971,7 +4971,7 @@ yoshi.tongueSettings = {
 
     eggAimMinAngle = -90,
     eggAimMaxAngle = 45,
-    eggAimAngleChange = 2,
+    eggAimAngleChange = 2.4,
 
     
 

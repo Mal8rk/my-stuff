@@ -1,0 +1,13 @@
+{
+	"style" : "groupbox",
+	"title" : "Milde Settings",
+	"layout": [	
+{
+			"control": "combobox",
+			"name": "type",
+			"title": "Milde Type",
+			"elements": ["Normal", "Cutscene"],
+			"value-default": 0
+		}
+		]
+}
