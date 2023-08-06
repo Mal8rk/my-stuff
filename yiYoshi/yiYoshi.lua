@@ -2109,6 +2109,13 @@ do
             p.keys.down = false
         end
 
+        if playerstun.isStunned(p.idx) then
+            table.insert(data.followingEggs,data.aimingWithEgg)
+            data.aimingWithEgg = nil
+            data.tongueState = TONGUE_STATE.INACTIVE
+            data.tongueTimer = 0
+        end
+
         if data.tongueState == TONGUE_STATE.AIMING then
             if data.aimingSound == nil or not data.aimingSound:isPlaying() then
                 data.aimingSound = SFX.play{sound = yoshi.tongueSettings.eggAimSound,volume = 0.35,loops = 0}

@@ -1,5 +1,6 @@
 local npcManager = require("npcManager")
 local npcutils = require("npcs/npcutils")
+local playerStun = require("playerstun")
 
 local sampleNPC = {}
 
@@ -240,7 +241,13 @@ function sampleNPC.onTickEndNPC(v)
 			doSquish(v)
 			if data.stateTimer == 136 and v.collidesBlockBottom then
 			    Defines.earthquake = 7
-				local npc = NPC.spawn(880, Camera.get()[1].x + RNG.randomInt(-500, 800), Camera.get()[1].y + 1 * 10 - 60, player.section)
+				NPC.spawn(880, Camera.get()[1].x + RNG.randomInt(-500, 800), Camera.get()[1].y + 1 * 10 - 60, player.section)
+				for k, p in ipairs(Player.get()) do
+					if p:isGroundTouching() and not playerStun.isStunned(k) and v:mem(0x146, FIELD_WORD) == player.section then
+						playerStun.stunPlayer(k, 90)
+						NPC.spawn(974, player.x + 0.5 * player.width, Camera.get()[1].y - 0, player.section, false, true)
+					end
+				end
 				v.speedX = 0
 				SFX.play(37)
 				v.animationFrame = 3
@@ -280,6 +287,9 @@ function sampleNPC.onTickEndNPC(v)
 				data.shakeY = 2
 				v.y = v.y - 1
 			end
+		elseif data.stateTimer == 311 then
+		    data.state = STATE_RECOVER
+			data.stateTimer = 0
 		end
 	elseif data.state == STATE_HURT then
 	    data.stateTimer = data.stateTimer + 1
@@ -310,6 +320,31 @@ function sampleNPC.onTickEndNPC(v)
 		    data.state = STATE_GROUNDPOUND
 			data.stateTimer = 0
 		end
+	elseif data.state == STATE_RECOVER then
+	    data.stateTimer = data.stateTimer + 1
+		if data.stateTimer == 1 then
+			data.timer = 0
+			data.stretchTimer = 0
+			data.squishTimer = 0
+			v.animationFrame = 3
+			v.speedY = -5.5
+	    elseif data.stateTimer >= 1 and data.stateTimer <= 13 then
+		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
+		elseif data.stateTimer >= 44 and data.stateTimer <= 64 then
+			doSquish(v)
+			if data.stateTimer == 44 and v.collidesBlockBottom then
+				SFX.play(37)
+				v.animationFrame = 3
+				v.animationTimer = 0
+			elseif data.stateTimer == 64 then
+				data.timer = 0
+				data.stretchTimer = 0
+				data.squishTimer = 0
+			end
+		elseif data.stateTimer == 100 then
+		    data.state = STATE_WALKING
+			data.stateTimer = 0
+		end
     elseif data.state == STATE_GROUNDPOUND then
 	    data.stateTimer = data.stateTimer + 1
 		if data.stateTimer >= 1 and data.stateTimer < 20 then
@@ -323,17 +358,40 @@ function sampleNPC.onTickEndNPC(v)
 			data.squishTimer = 0
 			data.stretchTimer = 0
 		elseif data.stateTimer >= 74 and data.stateTimer <= 166 then
-		    v.nogravity = true
-			if data.stateTimer >= 75 and data.stateTimer <= 99 then
-		        data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
-			elseif data.stateTimer == 120 then
-			    v.speedY = 6
-			elseif data.stateTimer == 166 then
-				data.timer = 0
-				data.stretchTimer = 0
-				data.squishTimer = 0
+			if data.stateTimer == 75 then
+				SFX.play(36)
 			end
-		elseif data.stateTimer == 200 then
+			v.speedY = -Defines.npc_grav
+			if data.stateTimer >= 76 and data.stateTimer <= 99 then
+		        data.rotation = ((data.rotation or 0) + math.deg((8.4 * -v.direction)/((v.width+v.height)/-6)))
+			elseif data.stateTimer >= 120 and data.stateTimer <= 167 then
+			    v.speedY = 20
+			end
+		elseif data.stateTimer == 167 then
+			v.speedY = Defines.npc_grav
+			Defines.earthquake = 9
+			for k, p in ipairs(Player.get()) do
+				if p:isGroundTouching() and not playerStun.isStunned(k) and v:mem(0x146, FIELD_WORD) == player.section then
+					playerStun.stunPlayer(k, 90)
+				end
+			end
+			local npc = NPC.spawn(972, v.x + 32, v.y + 64)
+			local npc2 = NPC.spawn(972, v.x + 32, v.y + 64)
+			npc.speedX = -5
+			npc2.speedX = 5
+			SFX.play(37)
+			v.animationFrame = 3
+			v.animationTimer = 0
+			if Colliders.collide(player, v) then
+				player:harm()
+			end
+		elseif data.stateTimer >= 168 and data.stateTimer <= 189 then
+			doSquish(v)
+	    elseif data.stateTimer == 190 then
+			data.timer = 0
+			data.stretchTimer = 0
+			data.squishTimer = 0
+		elseif data.stateTimer == 220 then
 		    data.state = STATE_WALKING
 			data.stateTimer = 0
 		end
@@ -382,8 +440,6 @@ function sampleNPC.onTickEndNPC(v)
 		    SFX.play(smwbosspoof)
 			v:kill(HARM_TYPE_OFFSCREEN)
 			Effect.spawn(753, v.x + 48, v.y + 80)
-			local npc = NPC.spawn(971, v.x + 32, v.y + 32)
-			npc.speedY = -8
 		end
 	end
 

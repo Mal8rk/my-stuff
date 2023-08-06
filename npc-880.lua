@@ -117,6 +117,7 @@ function sampleNPC.onTickNPC(v)
 		--Initialize necessary data.
 		data.initialized = true
 		data.timer = 0
+		data.shake = 0
 		data.palette = 0
 		data.scale = 0
 	end
@@ -140,12 +141,14 @@ function sampleNPC.onTickNPC(v)
 			v.animationTimer = 0
 			v.speedX = 0
 		elseif data.timer <= 400 then
-		    data.palette = 1
+			if i == 1 then
+				data.palette = 1
+			end
 		end
 	end
 
 	if not Defines.levelFreeze then
-		if data.palette > 0 and lunatime.tick()%6 == 0 then
+		if data.palette > 0 and lunatime.tick() % 6 == 0 then
 			data.palette = (data.palette % 15) + 1
 		end
 	end
@@ -161,7 +164,7 @@ function sampleNPC.onDrawNPC(v)
     local data = v.data
     local settings = v.data._settings
 
-	Text.print(settings.type, 8, 8)
+	Text.print(data.palette, 8, 8)
 	Text.print(data.timer, 8, 32)
 
 	if not data.initialized then return end
@@ -180,8 +183,8 @@ function sampleNPC.onDrawNPC(v)
 	scalingBuffer:clear(priority)
 	--Graphics.drawBox{target = scalingBuffer,x = 0,y = 0,width = scalingBuffer.width,height = scalingBuffer.height,priority = priority,color = Color.purple}
 
-	data.sprite.x = scalingBuffer.width
-	data.sprite.y = scalingBuffer.height
+	data.sprite.x = scalingBuffer.width * 0.5
+	data.sprite.y = scalingBuffer.height * 0.5
 	data.sprite.scale = vector(RENDER_SCALE * data.scale,RENDER_SCALE * data.scale)
 
 	data.sprite:draw{frame = data.frame,priority = priority,target = scalingBuffer,shader = mainShader,uniforms = {
@@ -198,7 +201,7 @@ function sampleNPC.onDrawNPC(v)
 	Graphics.drawBox{
 		texture = scalingBuffer,centred = true,sceneCoords = true,priority = priority,
 		x = v.x + v.width*0.5 + config.gfxoffsetx,
-		y = v.y + v.height - (Graphics.sprites.npc[v.id].img.height / config.frames)*0.5 + config.gfxoffsety + ((lunatime.tick() % 2) - 0.5)*2,
+		y = v.y + v.height - (Graphics.sprites.npc[v.id].img.height / config.frames)*0.5 + config.gfxoffsety + ((lunatime.tick() % 2) - 0.5)*2*data.shake,
 		width = (scalingBuffer.width / RENDER_SCALE) * -v.direction,height = scalingBuffer.height / RENDER_SCALE,
 		sourceWidth = scalingBuffer.width,sourceHeight = scalingBuffer.height,
 		shader = shader,uniforms = uniforms,
