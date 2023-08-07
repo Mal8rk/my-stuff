@@ -120,6 +120,7 @@ function sampleNPC.onTickNPC(v)
 		data.shake = 0
 		data.palette = 0
 		data.scale = 0
+		data.shakeY = 0
 	end
 
 	--do not show the smoke effect that appears when you jump on the npc
@@ -135,15 +136,36 @@ function sampleNPC.onTickNPC(v)
 		data.timer = 0
 	elseif settings.type == 1 then
 	    v.speedX = NPC.config[npcID].speed * v.direction
-		if data.timer >= 160 then
+		if data.timer == 925 then
+		    v.sectionObj.music = "music/Super Princess Peach OST Boss Fight.ogg"
+            v:kill(HARM_TYPE_VANISH)
+			local boss = NPC.spawn(970, v.x - 32, v.y - 60, player.section)
+			boss.data.state = 7
+			boss.direction = -1
+		elseif data.timer >= 901 then
+		    v.speedX = 0
+		    v.animationFrame = 0
+			v.animationTimer = 0
+		elseif data.timer == 900 then
+		    SFX.play(1)
+            v.speedY = -8
+		    v.speedX = 0
+		elseif data.timer >= 500 then
+		    v.speedX = 0
+		    v.animationFrame = 2
+			v.animationTimer = 0
+			if data.shakeY == 2 then
+				data.shakeY = 0
+				v.y = v.y + 1
+			else
+				data.shakeY = 2
+				v.y = v.y - 1
+			end
+		elseif data.timer >= 160 then
 		    data.palette = 0
 		    v.animationFrame = 2
 			v.animationTimer = 0
 			v.speedX = 0
-		elseif data.timer <= 400 then
-			if i == 1 then
-				data.palette = 1
-			end
 		end
 	end
 
@@ -163,9 +185,6 @@ function sampleNPC.onDrawNPC(v)
 
     local data = v.data
     local settings = v.data._settings
-
-	Text.print(data.palette, 8, 8)
-	Text.print(data.timer, 8, 32)
 
 	if not data.initialized then return end
 

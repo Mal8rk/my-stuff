@@ -147,6 +147,7 @@ ID:753;X:-200000;Y:-200160;
 ID:753;X:-199232;Y:-200160;
 BGO_END
 NPC
+ID:973;X:-197664;Y:-200416;D:-1;
 ID:880;X:-199200;Y:-200128;D:-1;XTRA:"{\n    \"type\"\: 1\n}\n";
 NPC_END
 LAYERS
@@ -155,8 +156,9 @@ LR:"Destroyed Blocks";HD:1;
 LR:"Spawned NPCs";
 LAYERS_END
 EVENTS_CLASSIC
-ET:"Level - Start";AS:0;AX:0;AY:0;
+ET:"Level - Start";TE:"yoshilookUp";TD:30;PC:000000010000;AS:0;AX:0;AY:0;
 ET:"P Switch - Start";AS:0;AX:0;AY:0;
 ET:"P Switch - End";AS:0;AX:0;AY:0;
-ET:"dialogue";MG:"<setPos 400 190 0.5 0><portrait kamek 1>Well well well... Our friend Yoshi here is still trying to be an amazing hero<page><portrait kamek 4>Little does he know that hit brittle bones will be CRUSHED and TARNISHED by the one and only GIGA MILDE!!!";AS:0;AX:0;AY:0;
+ET:"yoshilookUp";TE:"dialogue";TD:19;PC:100000000000;AS:0;AX:0;AY:0;
+ET:"dialogue";MG:"<setPos 400 190 0.5 0><portrait kamek 1>Well well well... Our friend Yoshi here is still trying to be an amazing hero<page><portrait kamek 4>Little does he know his brittle bones will be CRUSHED and TARNISHED by the one and only GIGA MILDE!!!";PC:100000000000;AS:0;AX:0;AY:0;
 EVENTS_CLASSIC_END

@@ -89,6 +89,8 @@ local STATE_FLIP = 3
 local STATE_HURT = 4
 local STATE_DEAD = 5
 local STATE_RECOVER = 6
+local STATE_INTRO = 7
+local STATE_DROP = 8
 
 function sampleNPC.onInitAPI()
 	npcManager.registerEvent(npcID, sampleNPC, "onTickEndNPC")
@@ -186,15 +188,16 @@ function sampleNPC.onTickEndNPC(v)
 	
 	if v.despawnTimer <= 0 then
 		data.initialized = false
+		data.state = nil
 		return
 	end
 
 	if not data.initialized then
 		data.initialized = true
-		data.squishTimer = 0
-		data.stretchTimer = 0
+		data.squishTimer = 23
+		data.stretchTimer = 80
 		data.timer = data.timer or 0
-		data.state = STATE_WALKING
+		data.state = data.state or STATE_WALKING
 		data.stateTimer = 0
 		data.rotation = 0
 		data.shakeX = 0
@@ -441,6 +444,45 @@ function sampleNPC.onTickEndNPC(v)
 			v:kill(HARM_TYPE_OFFSCREEN)
 			Effect.spawn(753, v.x + 48, v.y + 80)
 		end
+	elseif data.state == STATE_INTRO then
+	    data.stateTimer = data.stateTimer + 1
+		if data.stateTimer >= 1 and data.stateTimer <= 60 then
+		    v.speedY = -Defines.npc_grav
+			if data.stateTimer == 1 then
+			    SFX.play(27)
+		    elseif data.stateTimer >= 2 and data.stateTimer <= 11 then
+		        data.squishTimer = data.squishTimer - 1
+			    data.stretchTimer = data.stretchTimer - 3.5
+			elseif data.stateTimer == 31 then
+			    SFX.play(27)
+		    elseif data.stateTimer >= 32 and data.stateTimer <= 43 then
+		        data.squishTimer = data.squishTimer - 1
+			    data.stretchTimer = data.stretchTimer - 3.5
+			end
+		elseif data.stateTimer == 61 then
+		    data.state = STATE_DROP
+			data.stateTimer = 0
+		end
+	elseif data.state == STATE_DROP then
+	    data.stateTimer = data.stateTimer + 1
+        if data.stateTimer >= 1 and data.stateTimer <= 29 then
+		    v.animationFrame = 0
+			v.animationTimer = 0
+		elseif data.stateTimer >= 30 and data.stateTimer <= 52 then
+			doSquish(v)
+			if data.stateTimer == 30 and v.collidesBlockBottom then
+				SFX.play(37)
+				v.animationFrame = 3
+				v.animationTimer = 0
+			elseif data.stateTimer == 52 then
+				data.timer = 0
+				data.stretchTimer = 0
+				data.squishTimer = 0
+			end
+		elseif data.stateTimer == 150 then
+		    data.state = STATE_WALKING
+			data.stateTimer = 0
+		end
 	end
 
 	-- animation controlling
@@ -456,7 +498,7 @@ function sampleNPC.onNPCHarm(eventObj, v, reason, culprit)
 	eventObj.cancelled = true
 
     if culprit then
-        if data.state == STATE_FLIP and (reason == HARM_TYPE_JUMP or reason == HARM_TYPE_SPINJUMP) and type(culprit) == "Player" then
+        if data.state == STATE_FLIP and reason == HARM_TYPE_SPINJUMP and type(culprit) == "Player" then
 		    if culprit.x+culprit.width*0.5 < v.x+v.width*0.5 then
 			    culprit.speedX = -4.5
 		    else
@@ -521,7 +563,6 @@ end
 function sampleNPC.onDrawNPC(v)
 	local config = NPC.config[v.id]
 	local data = v.data
-	Text.print(data.stateTimer, 8, 8)
 
 	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
 
