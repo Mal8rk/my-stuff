@@ -2,6 +2,9 @@ local npcManager = require("npcManager")
 local npcutils = require("npcs/npcutils")
 local playerStun = require("playerstun")
 
+local yoshi
+pcall(function() yoshi = require("yiYoshi/yiYoshi") end)
+
 local sampleNPC = {}
 
 local npcID = NPC_ID
@@ -440,9 +443,12 @@ function sampleNPC.onTickEndNPC(v)
 			data.stretchTimer = data.stretchTimer + 1.1
 			data.rotation = ((data.rotation or 0) + math.deg((6 * v.direction)/((v.width+v.height)/-6)))
 		elseif data.stateTimer == 537 then
+		    SFX.play(41)
 		    SFX.play(smwbosspoof)
 			v:kill(HARM_TYPE_OFFSCREEN)
 			Effect.spawn(753, v.x + 48, v.y + 80)
+		    local key = NPC.spawn(971, v.x + 24, v.y + 32)
+			key.speedY = -8
 		end
 	elseif data.state == STATE_INTRO then
 	    data.stateTimer = data.stateTimer + 1

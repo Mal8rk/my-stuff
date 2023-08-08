@@ -136,21 +136,21 @@ function sampleNPC.onTickNPC(v)
 		data.timer = 0
 	elseif settings.type == 1 then
 	    v.speedX = NPC.config[npcID].speed * v.direction
-		if data.timer == 925 then
+		if data.timer == 575 then
 		    v.sectionObj.music = "music/Super Princess Peach OST Boss Fight.ogg"
             v:kill(HARM_TYPE_VANISH)
 			local boss = NPC.spawn(970, v.x - 32, v.y - 60, player.section)
 			boss.data.state = 7
 			boss.direction = -1
-		elseif data.timer >= 901 then
+		elseif data.timer >= 551 then
 		    v.speedX = 0
 		    v.animationFrame = 0
 			v.animationTimer = 0
-		elseif data.timer == 900 then
+		elseif data.timer == 550 then
 		    SFX.play(1)
             v.speedY = -8
 		    v.speedX = 0
-		elseif data.timer >= 500 then
+		elseif data.timer >= 450 then
 		    v.speedX = 0
 		    v.animationFrame = 2
 			v.animationTimer = 0

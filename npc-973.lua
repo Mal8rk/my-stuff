@@ -24,9 +24,9 @@ local sampleNPCSettings = {
 	speed = 1,
 
 	npcblock = false,
-	npcblocktop = false, --Misnomer, affects whether thrown NPCs bounce off the NPC.
+	npcblocktop = false,
 	playerblock = false,
-	playerblocktop = false, --Also handles other NPCs walking atop this NPC.
+	playerblocktop = false,
 
 	nohurt = false,
 	nogravity = true,
@@ -74,6 +74,8 @@ npcManager.registerHarmTypes(npcID,
 	}
 );
 
+local magicEffectImage = Graphics.loadImageResolved("magic.png")
+
 local thatSound = Misc.resolveSoundFile("thatSound")
 
 local magicEffects = {}
@@ -116,14 +118,39 @@ function sampleNPC.onTickNPC(v)
     v:mem(0x124,FIELD_BOOL,true)
 	data.timer = data.timer + 1
 
-	if data.timer == 350 then
+	if data.timer == 550 then
+        v:kill(HARM_TYPE_VANISH)
+	elseif data.timer >= 470 then
+	    v.speedY = v.speedY - 0.3
+		v.speedX = -8
+	    v.animationFrame = math.floor(lunatime.tick() / 4) % 2 + 8
+	    v.animationTimer = 0
+	elseif data.timer >= 460 then
+	    v.speedY = 0
+		v.x = v.x + 0.3
+	    v.animationFrame = 7
+	    v.animationTimer = 0
+	elseif data.timer >= 450 then
+	    v.speedY = 0
+		v.x = v.x + 0.3
+	    v.animationFrame = 6
+	    v.animationTimer = 0
+	elseif data.timer >= 375 then
+	    v.speedY = math.cos(data.timer / 32) * 0.4
+	    v.animationFrame = 0
+	    v.animationTimer = 0
+	elseif data.timer >= 370 then
+	    v.speedY = math.cos(data.timer / 32) * 0.4
+	    v.animationFrame = 4
+	    v.animationTimer = 0
+	elseif data.timer == 350 then
 		table.insert(magicEffects,{
 			x = v.x + v.width*0.5,
 			y = v.y + v.height,
 			timer = 0,
 		})
 
-		SFX.play(59)
+		SFX.play(41)
 	elseif data.timer >= 335 then
 	    v.speedY = math.cos(data.timer / 32) * 0.4
 	    v.animationFrame = 5
@@ -177,11 +204,8 @@ end
 
 function sampleNPC.onDrawNPC(v)
 	local data = v.data
-	Text.print(data.timer, 8, 8)
-	Text.print(data.animTimer, 8, 32)
 end
 
-local magicEffectImage = Graphics.loadImage("magic.png")
 local magicEffectShader = Shader()
 magicEffectShader:compileFromFile(nil, "magic.frag")
 
@@ -200,15 +224,14 @@ end
 function sampleNPC.onDraw()
 
 	for _,effect in ipairs(magicEffects) do
-	    local image = magicEffectImage
 
 		Graphics.drawBox{
-			texture = image,sceneCoords = true,priority = -4,
+			texture = magicEffectImage,sceneCoords = true,priority = -4,
 			color = Color.fromHSV((lunatime.tick()/224) % 1,0.8,0.9),
-			x = effect.x - image.width*0.5,y = effect.y - 96,
-			height = image.height*2,sourceHeight = image.height,sourceY = 0,
+			x = effect.x - magicEffectImage.width*0.5,y = effect.y - 96,
+			height = magicEffectImage.height*2,sourceHeight = magicEffectImage.height,sourceY = 0,
 			shader = magicEffectShader,uniforms = {
-				imageSize = vector(image.width,image.height),
+				imageSize = vector(magicEffectImage.width,magicEffectImage.height),
 				time = effect.timer,
 			},
 		}

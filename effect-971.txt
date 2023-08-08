@@ -1,0 +1,8 @@
+[1]
+frames=1
+lifetime=500
+priority=-29
+speedY = -9.5
+xAlign=MID
+yAlign=MID
+rotation=17

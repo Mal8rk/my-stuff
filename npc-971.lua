@@ -43,6 +43,9 @@ local sampleNPCSettings = {
 
 	grabside=false,
 	grabtop=false,
+
+	ignorethrownnpcs = true,
+	isinteractable=true,
 }
 
 npcManager.setNpcSettings(sampleNPCSettings)
@@ -79,6 +82,7 @@ npcManager.registerHarmTypes(npcID,
 function sampleNPC.onInitAPI()
 	npcManager.registerEvent(npcID, sampleNPC, "onTickNPC")
 	npcManager.registerEvent(npcID, sampleNPC, "onDrawNPC")
+	registerEvent(sampleNPC, "onNPCKill")
 end
 
 function sampleNPC.onTickNPC(v)
@@ -94,8 +98,10 @@ function sampleNPC.onTickNPC(v)
 
 	if not data.initialized then
 		data.initialized = true
-		data.timer = 0
-		data.scale = 1
+		data.squishTimer = data.squishTimer or 23
+		data.stretchTimer = data.stretchTimer or 80
+		data.timer = data.timer or 0
+		data.rotation = 0
 	end
 
 	if v:mem(0x12C, FIELD_WORD) > 0    
@@ -105,44 +111,85 @@ function sampleNPC.onTickNPC(v)
 		--Handling
 	end
 
+	data.timer = data.timer + 1
+
+	npcutils.applyLayerMovement(v)
+
 	if RNG.randomInt(1,8) == 1 then
         local e = Effect.spawn(80, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
 
         e.x = e.x - e.width *0.5
         e.y = e.y - e.height*0.5
     end
+
+	if data.timer >= 1 and data.timer <= 24 then
+		data.squishTimer = data.squishTimer - 1
+		data.stretchTimer = data.stretchTimer - 3.5
+		data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
+	end
 end
 
-local lowPriorityStates = table.map{1,3,4}
+local function drawSprite(args) -- handy function to draw sprites
+	args = args or {}
+
+	args.sourceWidth  = args.sourceWidth  or args.width
+	args.sourceHeight = args.sourceHeight or args.height
+
+	if sprite == nil then
+		sprite = Sprite.box{texture = args.texture}
+	else
+		sprite.texture = args.texture
+	end
+
+	sprite.x,sprite.y = args.x,args.y
+	sprite.width,sprite.height = args.width,args.height
+
+	sprite.pivot = args.pivot or Sprite.align.TOPLEFT
+	sprite.rotation = args.rotation or 0
+
+	if args.texture ~= nil then
+		sprite.texpivot = args.texpivot or sprite.pivot or Sprite.align.TOPLEFT
+		sprite.texscale = args.texscale or vector(args.texture.width*(args.width/args.sourceWidth),args.texture.height*(args.height/args.sourceHeight))
+		sprite.texposition = args.texposition or vector(-args.sourceX*(args.width/args.sourceWidth)+((sprite.texpivot[1]*sprite.width)*((sprite.texture.width/args.sourceWidth)-1)),-args.sourceY*(args.height/args.sourceHeight)+((sprite.texpivot[2]*sprite.height)*((sprite.texture.height/args.sourceHeight)-1)))
+	end
+
+	sprite:draw{priority = args.priority,color = args.color,sceneCoords = args.sceneCoords or args.scene}
+end
 
 function sampleNPC.onDrawNPC(v)
-    if v.isHidden or v.despawnTimer <= 0 or v.animationFrame < 0 then return end
+	local config = NPC.config[v.id]
+	local data = v.data
+
+	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
+
+	local priority = -45
+	if config.priority then
+		priority = -15
+	end
+
+	drawSprite{
+		texture = Graphics.sprites.npc[v.id].img,
+
+		x = (v.x - data.stretchTimer)+(v.width/2)+config.gfxoffsetx + data.stretchTimer,y = v.y+v.height-(config.gfxheight/2)+config.gfxoffsety + data.squishTimer * 2,
+		width = config.gfxwidth - data.stretchTimer,height = config.gfxheight - data.squishTimer * 4,
+
+		sourceX = 0,sourceY = v.animationFrame*config.gfxheight,
+		sourceWidth = config.gfxwidth,sourceHeight = config.gfxheight,
+
+		priority = priority,rotation = data.rotation,
+		pivot = Sprite.align.CENTRE,sceneCoords = true,
+	}
+
+	npcutils.hideNPC(v)
+end
+
+function sampleNPC.onNPCKill(eventObj,v,reason,culprit)
 
     local config = NPC.config[v.id]
-    local data = v.data
 
-    if data.sprite == nil then
-        data.sprite = Sprite{texture = Graphics.sprites.npc[v.id].img,frames = npcutils.getTotalFramesByFramestyle(v),pivot = Sprite.align.CENTRE}
-    end
-
-    local priority
-    if v:mem(0x12C,FIELD_WORD) > 0 then
-        priority = -30
-    elseif lowPriorityStates[v:mem(0x138,FIELD_WORD)] then
-        priority = -75
-    elseif config.foreground then
-        priority = -15
-    else
-        priority = -45
-    end
-
-    data.sprite.x = v.x + v.width*0.5 + config.gfxoffsetx
-    data.sprite.y = v.y + v.height - config.gfxheight*0.5 + config.gfxoffsety
-
-    data.sprite.scale.x = data.scale or 1
-    data.sprite.scale.y = data.scale or 1
-
-    npcutils.hideNPC(v)
-end
+	if v.id ~= npcID then return end
+	    Level.exit(LEVEL_WIN_TYPE_SMB3ORB)
+	    SFX.play(51)
+	end
 
 return sampleNPC
