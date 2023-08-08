@@ -1,0 +1,10 @@
+{
+	"mainPage": "index.html",
+	"episodeIcon": "icon.png",
+	
+	"allowPlayerSelection": false,	
+	"allowTwoPlayer": false,
+	
+	"progressDisplay": "percent",
+	"maxProgress": 100
+}
