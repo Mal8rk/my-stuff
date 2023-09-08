@@ -242,7 +242,7 @@ local function unlockConnectedLevels(pathObj)
         ) then
             -- Spawn level appear effect
             if smwMap.unlockLevelEffectID ~= nil then
-                local sparkle = smwMap.createObject(smwMap.unlockLevelEffectID,levelObj.x,levelObj.y)
+                local sparkle = smwMap.createObject(smwMap.unlockLevelEffectID,levelObj.x,levelObj.y+36)
 
                 sparkle.data.affectingLevel = levelObj
             else
@@ -3678,16 +3678,9 @@ do
 
 
     smwMap.hudCounters = {
-        -- Lives
-        {
-            icon = Graphics.loadImageResolved("smwMap/hud_lives.png"),
-            getValue = (function()
-                return mem(0x00B2C5AC,FIELD_FLOAT)
-            end),
-        },
         -- Coins
         {
-            icon = Graphics.sprites.hardcoded["33-2"],
+            icon = Graphics.loadImageResolved("smwMap/coin.png"),
             getValue = (function()
                 return mem(0x00B2C5A8,FIELD_WORD)
             end),
@@ -4283,7 +4276,7 @@ smwMap.playerSettings = {
     canEnterDestroyedBonusLevels = false,
 
 
-    walkSpeed = 3,
+    walkSpeed = 6,
     climbSpeed = 0.75,
 
 
@@ -4310,8 +4303,8 @@ smwMap.playerSettings = {
 smwMap.pathSettings = {
     lockedColor = Color.fromHexRGBA(0x0000004E),
 
-    unlockAnimationFrequency = 12,
-    unlockAnimationDistance = 32,
+    unlockAnimationFrequency = 20,
+    unlockAnimationDistance = 64,
 
     unlockLoopSound = SFX.open(Misc.resolveSoundFile("smwMap/unlock_loop")),
     unlockFinishSound = SFX.open(Misc.resolveSoundFile("smwMap/unlock_finish")),
@@ -4360,8 +4353,8 @@ smwMap.hudSettings = {
     counterFont = textplus.loadFont("smwMap/MKDS.ini"),
     counterColor = Color.white,
     counterOffsetX = 64,
-    counterOffsetY = 469,
-    counterText = "x %s",
+    counterOffsetY = 455,
+    counterText = "x%s",
     counterScale = 2,
     counterGap = 4,
 
@@ -4370,8 +4363,8 @@ smwMap.hudSettings = {
 
     levelTitleFont = textplus.loadFont("smwMap/MKDS.ini"),
     levelTitleColor = Color.white,
-    levelTitleOffsetX = 128,
-    levelTitleOffsetY = -16,
+    levelTitleOffsetX = 3,
+    levelTitleOffsetY = 285,
     levelTitleScale = 2,
 
     levelTitleEnabled = true,
@@ -4387,7 +4380,7 @@ smwMap.hudSettings = {
     starcoinsEnabled = true,
 
 
-    priority = 5,
+    priority = -5,
 }
 
 

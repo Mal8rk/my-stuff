@@ -61,7 +61,7 @@ function warpBox.onDraw()
 	for k, p in ipairs(Player.get()) do
 		if warpBox.inWarpBox[k] > 0 then
 			-- make the player invisible
-			player:setFrame(-50*player.direction)
+			player:setFrame(1)
 		end
 	end
 end

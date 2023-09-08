@@ -98,8 +98,8 @@ function sampleNPC.onTickNPC(v)
 
 	if not data.initialized then
 		data.initialized = true
-		data.squishTimer = data.squishTimer or 23
-		data.stretchTimer = data.stretchTimer or 80
+		data.squishTimer = 23
+		data.stretchTimer = 80
 		data.timer = data.timer or 0
 		data.rotation = 0
 	end
@@ -108,7 +108,8 @@ function sampleNPC.onTickNPC(v)
 	or v:mem(0x136, FIELD_BOOL)        
 	or v:mem(0x138, FIELD_WORD) > 0    
 	then
-		--Handling
+	    data.squishTimer = 0
+		data.stretchTimer = 0
 	end
 
 	data.timer = data.timer + 1
@@ -162,6 +163,8 @@ function sampleNPC.onDrawNPC(v)
 
 	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
 
+	if data.stretchTimer == nil then return end
+
 	local priority = -45
 	if config.priority then
 		priority = -15
@@ -188,8 +191,9 @@ function sampleNPC.onNPCKill(eventObj,v,reason,culprit)
     local config = NPC.config[v.id]
 
 	if v.id ~= npcID then return end
-	    Level.exit(LEVEL_WIN_TYPE_SMB3ORB)
-	    SFX.play(51)
+        Section(player.section).musicID = 0
+		SFX.play("yiYoshi/exit_key.ogg")
+        Level.finish(LEVEL_END_STATE_SMB3ORB, true)
 	end
 
 return sampleNPC

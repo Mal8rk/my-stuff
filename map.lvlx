@@ -2,23 +2,33 @@ HEAD
 TL:"map";CPID:"SMBX2";
 HEAD_END
 SECTION
-SC:0;L:-200096;R:-198784;T:-200704;B:-199392;MZ:0;MF:"";BG:0;XTRA:"{\n    \"darkness\"\: {\n        \"playerlight\"\: {\n            \"brightness\"\: 0\n        }\n    }\n}\n";
+SC:0;L:-200096;R:-191968;T:-206656;B:-199392;MZ:0;MF:"";BG:0;XTRA:"{\n    \"darkness\"\: {\n        \"playerlight\"\: {\n            \"brightness\"\: 0\n        }\n    }\n}\n";
 SECTION_END
 BGO
 ID:751;X:-199936;Y:-199968;
+ID:752;X:-198912;Y:-199968;
+ID:753;X:-199888;Y:-199952;
+ID:754;X:-199888;Y:-199744;
+ID:755;X:-198880;Y:-199952;
+ID:756;X:-198880;Y:-199744;
 BGO_END
 NPC
-ID:801;X:-199872;Y:-199648;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-1.lvlx\"\,\n    \"levelTitle\"\: \"1-1\"\,\n    \"path_right\"\: \"1-2\"\,\n    \"unlock_right\"\: 4\n}\n";
-ID:801;X:-199744;Y:-199648;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-2.lvlx\"\,\n    \"levelTitle\"\: \"1-2\"\,\n    \"path_left\"\: \"1-2\"\,\n    \"path_right\"\: \"1-3\"\,\n    \"unlock_right\"\: 4\n}\n";
-ID:801;X:-199616;Y:-199648;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-3.lvlx\"\,\n    \"levelTitle\"\: \"1-3\"\,\n    \"path_left\"\: \"1-3\"\,\n    \"path_right\"\: \"1-4\"\,\n    \"unlock_right\"\: 4\n}\n";
-ID:801;X:-199488;Y:-199648;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-4.lvlx\"\,\n    \"levelTitle\"\: \"1-4\"\,\n    \"path_left\"\: \"1-4\"\,\n    \"path_right\"\: \"1-Boss\"\,\n    \"unlock_right\"\: 4\n}\n";
-ID:751;X:-199872;Y:-199648;D:-1;
+ID:751;X:-199856;Y:-199872;D:-1;
 ID:753;X:-199936;Y:-199968;D:-1;XTRA:"{\n    \"customMusicPath\"\: \"music/Super Princess Peach OST_ Welcome to Hoo's Wood!.ogg\"\,\n    \"height\"\: 404\,\n    \"music\"\: 2\,\n    \"restrictCamera\"\: true\n}\n";
-ID:802;X:-199360;Y:-199648;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-B.lvlx\"\,\n    \"levelTitle\"\: \"1-Boss\"\,\n    \"path_left\"\: \"1-Boss\"\,\n    \"unlock_up\"\: 2\n}\n";
-ID:752;X:-199840;Y:-199648;D:-1;XTRA:"{\n    \"hideIfLocked\"\: true\,\n    \"name\"\: \"1-2\"\,\n    \"points\"\: \"-32\,0\, 96\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
-ID:752;X:-199712;Y:-199648;D:-1;XTRA:"{\n    \"hideIfLocked\"\: true\,\n    \"name\"\: \"1-3\"\,\n    \"points\"\: \"-32\,0\, 96\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
-ID:752;X:-199584;Y:-199648;D:-1;XTRA:"{\n    \"hideIfLocked\"\: true\,\n    \"name\"\: \"1-4\"\,\n    \"points\"\: \"-32\,0\, 96\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
-ID:752;X:-199456;Y:-199648;D:-1;XTRA:"{\n    \"hideIfLocked\"\: true\,\n    \"name\"\: \"1-Boss\"\,\n    \"points\"\: \"-32\,0\, 96\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:753;X:-198912;Y:-199968;D:-1;XTRA:"{\n    \"customMusicPath\"\: \"music/Super Princess Peach OST_ Welcome to Wavy Beach!.ogg\"\,\n    \"height\"\: 404\,\n    \"music\"\: 2\,\n    \"restrictCamera\"\: true\n}\n";
+ID:752;X:-198912;Y:-199648;D:-1;XTRA:"{\n    \"hideIfLocked\"\: false\,\n    \"name\"\: \"W1\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:802;X:-199760;Y:-199872;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-2.lvlx\"\,\n    \"levelTitle\"\: \"Happy Hills-2\"\,\n    \"path_left\"\: \"1-2\"\,\n    \"path_right\"\: \"1-3\"\,\n    \"unlock_down\"\: 0\,\n    \"unlock_right\"\: 4\n}\n";
+ID:804;X:-199568;Y:-199872;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-4.lvlx\"\,\n    \"levelTitle\"\: \"Happy Hills-4\"\,\n    \"path_left\"\: \"1-4\"\,\n    \"path_right\"\: \"1-B\"\,\n    \"unlock_right\"\: 4\n}\n";
+ID:803;X:-199664;Y:-199872;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-3.lvlx\"\,\n    \"levelTitle\"\: \"Happy Hills-3\"\,\n    \"path_left\"\: \"1-3\"\,\n    \"path_right\"\: \"1-4\"\,\n    \"unlock_right\"\: 4\n}\n";
+ID:801;X:-199856;Y:-199872;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-1.lvlx\"\,\n    \"levelTitle\"\: \"Happy Hills-1\"\,\n    \"path_right\"\: \"1-2\"\,\n    \"unlock_right\"\: 4\n}\n";
+ID:752;X:-199824;Y:-199872;D:-1;XTRA:"{\n    \"name\"\: \"1-2\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:752;X:-199728;Y:-199872;D:-1;XTRA:"{\n    \"name\"\: \"1-3\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:752;X:-199632;Y:-199872;D:-1;XTRA:"{\n    \"name\"\: \"1-4\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:752;X:-199536;Y:-199872;D:-1;XTRA:"{\n    \"name\"\: \"1-B\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:807;X:-199472;Y:-199872;D:-1;XTRA:"{\n    \"levelFilename\"\: \"1-B.lvlx\"\,\n    \"levelTitle\"\: \"Happy Hills-Boss\"\,\n    \"path_left\"\: \"1-B\"\,\n    \"path_right\"\: \"W2\"\,\n    \"unlock_down\"\: 4\n}\n";
+ID:822;X:-199376;Y:-199872;D:-1;XTRA:"{\n    \"levelTitle\"\: \"To World 2\"\,\n    \"path_left\"\: \"W2\"\,\n    \"warpName\"\: \"W2\"\n}\n";
+ID:752;X:-199440;Y:-199872;D:-1;XTRA:"{\n    \"name\"\: \"W2\"\,\n    \"points\"\: \"-32\,0\, 32\,0\, 64\,0\"\,\n    \"types\"\: \"trail\"\n}\n";
+ID:823;X:-198848;Y:-199872;D:-1;XTRA:"{\n    \"destinationWarpName\"\: \"W2\"\,\n    \"levelTitle\"\: \"To World 1\"\,\n    \"warpName\"\: \"\"\n}\n";
 NPC_END
 LAYERS
 LR:"Default";

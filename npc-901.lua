@@ -69,7 +69,7 @@ function effectconfig.onTick.TICK_ECOIN(v)
        Effect.spawn(752, v.x+25, v.y+25)
     end
 	if RNG.randomInt(1,30) == 1 then
-        local e = Effect.spawn(78, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
+        local e = Effect.spawn(80, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
 
         e.x = e.x - e.width *0.5
         e.y = e.y - e.height*0.5
@@ -100,7 +100,7 @@ function sampleNPC.onDrawNPC(v)
 	});
 
 	if RNG.randomInt(1,30) == 1 then
-        local e = Effect.spawn(78, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
+        local e = Effect.spawn(80, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
 
         e.x = e.x - e.width *0.5
         e.y = e.y - e.height*0.5

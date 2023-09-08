@@ -1260,6 +1260,8 @@ do
         [190] = NPC_TONGUE_BEHAVIOUR.PASSES_THROUGH,  -- bone lift
         [194] = NPC_TONGUE_BEHAVIOUR.NO_EGG,          -- rainbow shell
         [207] = NPC_TONGUE_BEHAVIOUR.EDIBLE,          -- spiketop
+        [231] = NPC_TONGUE_BEHAVIOUR.INSTANT_SWALLOW, -- blooper
+        [236] = NPC_TONGUE_BEHAVIOUR.INSTANT_SWALLOW, -- cheep cheep
         [246] = NPC_TONGUE_BEHAVIOUR.PASSES_THROUGH,  -- fireball
         [284] = NPC_TONGUE_BEHAVIOUR.INSTANT_SWALLOW, -- smw lakitu
         [288] = NPC_TONGUE_BEHAVIOUR.NO_EGG,          -- subspace potion

@@ -1,0 +1,36 @@
+{
+	"style" : "groupbox",
+	"title" : "Dancing Spear Guy Settings",
+	"layout": [
+		{
+			"control": "spinBox",
+			"type": "int",
+			"name": "spearHeight",
+			"title": "Spear Height",
+			"tooltip": "Changes the height of the Dancing Spear Guy's Spear.",
+			"value-default": 2,
+			"value-min": 1,
+			"value-max": 15,
+			"single-step": 1
+		},
+		{
+            "control": "lineEdit",
+            "name": "sequence",
+            "title": "Dance Sequence",
+            "tooltip": "A set of numbers will determine what the NPC will do.",
+            "value-default": "0"
+		},
+		{
+			"control": "description",
+			"name": "zero",
+			"text": "<b>0</b>: Causes the NPC to <b>jump straight up</b>.<br><b>1</b>: Causes the NPC to <b>scurry around on the spot</b><br><b>2</b>:Causes the NPC to <b>hop on one foot (left)</b><br><b>3</b>:Causes the NPC to <b>hop on one foot (right)</b><br><b>4</b>:Causes the NPC to <b>jump to the left</b><br>
+			<b>5</b>:Causes the NPC to <b>jump to the right</b><br><b>6</b>:Causes the NPC to <b>twirl in a circle moving left</b><br><b>7</b>:Causes the NPC to <b>twirl in a circle moving right</b><br><b>8</b>:Causes the NPC to <b>wiggle its butt at the camera</b>"
+		},
+		{
+			"control": "lineEdit",
+			"title": "Example",
+			"value-default": "3,7,1,5,3,7,8,5",
+			"read-only": true
+        }
+	]
+}

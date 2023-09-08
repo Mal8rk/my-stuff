@@ -7,6 +7,7 @@ local customCamera = require("customCamera")
 local klonoa = require("characters/klonoa")
 local hudoverride = require ("hudoverride")
 local sinelayers = require("sinelayers")
+local prismPause = require("pauseMenu")
 
 littleDialogue.defaultStyleName = "yi"
 

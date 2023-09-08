@@ -15,7 +15,7 @@ local obj = {}
 
 
 smwMap.setObjSettings(npcID,{
-    framesY = 7,
+    framesY = 10,
 
     onTickObj = (function(v)
         v.data.timer = (v.data.timer or 0) + 1

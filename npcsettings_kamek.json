@@ -1,0 +1,13 @@
+{
+	"style" : "groupbox",
+	"title" : "Kamek Settings",
+	"layout": [	
+{
+			"control": "combobox",
+			"name": "type",
+			"title": "Kamek Type",
+			"elements": ["Cutscene 1", "Cutscene 2", "Cutscene 3", "Cutscene 4", "Dark Star 1", "Dark Star 2", "Dark Star 3", "Dark Star 4", "Kamek 1"],
+			"value-default": 0
+		}
+		]
+}

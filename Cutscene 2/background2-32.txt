@@ -1,0 +1,13 @@
+fill-color = #009cff
+
+[hills]
+img="hills_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=100
+
+[bushes]
+img="mushrooms_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=90

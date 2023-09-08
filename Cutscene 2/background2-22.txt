@@ -1,0 +1,13 @@
+fill-color = #A5FFFF
+
+[sky]
+img="sky_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=600
+
+[beach]
+img="beach_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=90
