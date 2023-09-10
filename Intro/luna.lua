@@ -3,6 +3,7 @@ local cutscenePal = require("cutscenePal")
 
 local handycam = require("handycam")
 local littleDialogue = require("littleDialogue")
+local distortionEffects = require("distortionEffects")
 local easing = require("ext/easing")
 
 Player.setCostume(CHARACTER_MARIO,nil,true)
@@ -60,6 +61,7 @@ local function spawnKamekActor(x,y)
             --Standing animations
             idleStanding = {1, defaultFrameY = 7},
             talkStanding = {1,2,3,2, defaultFrameY = 7, frameDelay = 4},
+            walking = {4,1, defaultFrameY = 7, frameDelay = 8},
 
             idleStandingRight = {1, defaultFrameY = 8},
             talkStandingRight = {1,2,3,2, defaultFrameY = 8, frameDelay = 4},
@@ -72,6 +74,122 @@ local function spawnKamekActor(x,y)
 
     -- Add it to the scene's data table (which is of course optional) and return.
     intro.data.kamekActor = actor
+
+    return actor
+end
+
+local function spawnToadie1Actor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("toadies.png")
+    actor:setFrameSize(64,64) -- each frame is 56x54
+    actor:setSize(32,32) -- hitbox size is 32x48
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            fly = {1,2,3,4,3,2, defaultFrameY = 1, frameDelay = 5},
+
+            talk = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 5},
+
+            surprised = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 5},
+        },
+        startAnimation = "fly",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.toadie1Actor = actor
+
+    return actor
+end
+
+local function spawnToadie2Actor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("toadies.png")
+    actor:setFrameSize(64,64) -- each frame is 56x54
+    actor:setSize(32,32) -- hitbox size is 32x48
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            fly = {1,2,3,4,3,2, defaultFrameY = 1, frameDelay = 5},
+
+            talk = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 5},
+
+            surprised = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 5},
+        },
+        startAnimation = "fly",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.toadie2Actor = actor
+
+    return actor
+end
+
+local function spawnToadie3Actor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("toadies.png")
+    actor:setFrameSize(64,64) -- each frame is 56x54
+    actor:setSize(32,32) -- hitbox size is 32x48
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            fly = {1,2,3,4,3,2, defaultFrameY = 1, frameDelay = 5},
+
+            talk = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 5},
+
+            surprised = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 5},
+        },
+        startAnimation = "fly",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.toadie3Actor = actor
+
+    return actor
+end
+
+local function spawnToadie4Actor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("toadies.png")
+    actor:setFrameSize(64,64) -- each frame is 56x54
+    actor:setSize(32,32) -- hitbox size is 32x48
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            fly = {1,2,3,4,3,2, defaultFrameY = 1, frameDelay = 5},
+
+            talk = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 5},
+
+            surprised = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 5},
+        },
+        startAnimation = "fly",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.toadie4Actor = actor
 
     return actor
 end
@@ -153,6 +271,7 @@ function intro:mainRoutineFunc()
 
     Routine.wait(2)
     bowser:setAnimation("talk")
+    SFX.play("Bowser 1.wav")
 
     Routine.wait(1.5)
     createDialogueBox(vector(bowser.x,bowser.y),"<boxStyle yi>.")
@@ -161,7 +280,13 @@ function intro:mainRoutineFunc()
     kamek:setAnimation("talkStanding")
     bowser:setAnimation("idle")
 
-    Routine.wait(1.5)
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
     createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>.")
 
     Routine.wait(0.43)
@@ -169,16 +294,25 @@ function intro:mainRoutineFunc()
     bowser:setAnimation("roaring")
 
     Routine.wait(0.3)
-    Defines.earthquake = 6
+    Defines.earthquake = 8
+    distortionEffects.create{x = bowser.x+(bowser.width/2),y = bowser.y+(bowser.height/2)}
 
-    Routine.wait(1.5)
+    SFX.play("Bowser 2.wav")
+
+    Routine.wait(2.3)
     createDialogueBox(vector(bowser.x,bowser.y),"<boxStyle yi>.")
 
     Routine.wait(0.43)
     kamek:setAnimation("talkStanding")
     bowser:setAnimation("idle")
 
-    Routine.wait(1.5)
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
     createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>wanna see a magic trick?")
 
     Routine.wait(0.43)
@@ -189,12 +323,23 @@ function intro:mainRoutineFunc()
     magic.speedX = 4*-kamek.direction
     magic.speedY = -0.6
 
-	while RNG.randomInt(1,30) == 1 do
-        local e = Effect.spawn(80, v.x + RNG.randomInt(0,v.width), v.y + RNG.randomInt(0,v.height))
+    SFX.play(41)
+    SFX.play("Bowser 3.wav")
 
-        e.x = e.x - e.width *0.5
-        e.y = e.y - e.height*0.5
-    end
+    Audio.MusicFadeOut(player.section, 2000)
+
+    self:runChildRoutine(function()
+        while magic.isValid do
+            if RNG.randomInt(1,4) == 1 then
+                local e = Effect.spawn(80, magic.x + RNG.randomInt(0,magic.width), magic.y + RNG.randomInt(0,magic.height))
+        
+                e.x = e.x - e.width *0.5
+                e.y = e.y - e.height*0.5
+            end
+
+            Routine.skip()
+        end
+    end)
 
     kamek:setAnimation("castingSpell")
     bowser:setAnimation("surprised")
@@ -203,13 +348,227 @@ function intro:mainRoutineFunc()
     kamek:setAnimation("idleStanding")
     bowser:setAnimation("pushedAway")
 
+    Defines.earthquake = 5
+    distortionEffects.create{x = magic.x+(magic.width/2),y = magic.y+(magic.height/2)}
+
     magic:remove()
+
+    SFX.play("Explosion.wav")
+    SFX.play("Bowser 4.wav")
 
     bowser.useAutoFloor = false
     bowser.speedX = 2.4*bowser.direction
     bowser.speedY = -10
 
-    Routine.wait(4)
+    Routine.wait(2.9)
+    kamek:setAnimation("walking")
+
+    bowser:remove()
+
+    kamek:walkAndWait{
+        goal = -199552,speed = 1,setDirection = false,
+        walkAnimation = "walking",stopAnimation = "idleStanding",
+    }
+
+    Routine.wait(0.28)
+    Audio.MusicChange(0, "music/Super Princess Peach OST_ Welcome to Bowser's Villa!.ogg")
+
+    kamek:setAnimation("idleStandingRight")
+    kamek.direction = -kamek.direction
+
+    Routine.wait(1.5)
+    kamek:setAnimation("talkStandingRight")
+
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
+    createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>YO I'M FREEEEEEEEEEE")
+
+    Routine.wait(0.43)
+    kamek:setAnimation("idleStandingRight")
+
+    local toadie1 = spawnToadie1Actor(-200048, -200128)
+    toadie1.direction = DIR_LEFT
+
+    local toadie2 = spawnToadie2Actor(-200096, -200128)
+    toadie2.direction = DIR_LEFT
+
+    local toadie3 = spawnToadie3Actor(-200144, -200128)
+    toadie3.direction = DIR_LEFT
+
+    local toadie4 = spawnToadie4Actor(-200192, -200128)
+    toadie4.direction = DIR_LEFT
+
+    toadie1:walkAndWait{
+        goal = -199744,speed = 5.5,setDirection = false,
+        walkAnimation = "fly",stopAnimation = "fly",
+    }
+
+    toadie2:walkAndWait{
+        goal = -199792,speed = 5.5,setDirection = false,
+        walkAnimation = "fly",stopAnimation = "fly",
+    }
+
+    toadie3:walkAndWait{
+        goal = -199840,speed = 5.5,setDirection = false,
+        walkAnimation = "fly",stopAnimation = "fly",
+    }
+
+    toadie4:walkAndWait{
+        goal = -199888,speed = 5.5,setDirection = false,
+        walkAnimation = "fly",stopAnimation = "fly",
+    }
+
+    Routine.wait(1.5)
+    toadie1:setAnimation("talk")
+
+    SFX.play("Toadie talks.wav")
+
+    Routine.wait(0.9)
+    createDialogueBox(vector(toadie1.x,toadie1.y),"<boxStyle yi>hey what happened")
+
+    Routine.wait(0.43)
+    toadie1:setAnimation("fly")
+    toadie3:setAnimation("talk")
+
+    SFX.play("Toadie talks.wav")
+
+    Routine.wait(0.9)
+    createDialogueBox(vector(toadie3.x,toadie3.y),"<boxStyle yi>we heard loud noises")
+
+    Routine.wait(0.43)
+    toadie3:setAnimation("fly")
+    kamek:setAnimation("talkStandingRight")
+
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
+    createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>nah it's nothin, now CALL ME YOUR MASTER DAMNIT")
+
+    Routine.wait(0.43)
+    kamek:setAnimation("idleStandingRight")
+
+    SFX.play(49)
+
+    toadie1:setAnimation("surprised")
+    toadie2:setAnimation("surprised")
+    toadie3:setAnimation("surprised")
+    toadie4:setAnimation("surprised")
+
+    toadie1.speedX = -1.1
+    toadie2.speedX = -1.1
+    toadie3.speedX = -1.1
+    toadie4.speedX = -1.1
+
+    Routine.wait(0.25)
+    toadie1.speedX = -0
+    toadie2.speedX = -0
+    toadie3.speedX = -0
+    toadie4.speedX = -0
+
+    Routine.wait(1)
+    toadie1:setAnimation("talk")
+    toadie2:setAnimation("talk")
+    toadie3:setAnimation("talk")
+    toadie4:setAnimation("talk")
+
+    SFX.play("Toadie talks.wav")
+
+    Routine.wait(0.9)
+    createDialogueBox(vector(toadie2.x,toadie2.y),"<boxStyle yi>yeah master what to do now")
+
+    Routine.wait(0.43)
+    toadie1:setAnimation("fly")
+    toadie2:setAnimation("fly")
+    toadie3:setAnimation("fly")
+    toadie4:setAnimation("fly")
+
+    kamek:setAnimation("idle")
+    Effect.spawn(772, kamek.x - 40, kamek.y - 40, player.section)
+
+    kamek.useAutoFloor = false
+    kamek.gravity = 0
+
+    local childRoutineObj = self:runChildRoutine(function()
+        while kamek.isValid do
+            kamek.speedY = math.cos(lunatime.tick() / 32) * 0.4
+
+            Routine.skip()
+        end
+    end)
+
+    Routine.wait(2)
+    kamek:setAnimation("talk")
+
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
+    createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>follow me")
+
+    Routine.wait(0.43)
+    kamek:setAnimation("stop")
+    kamek.speedX = 1.1
+
+    Routine.wait(0.25)
+    kamek:setAnimation("fly")
+    kamek.speedX = -8
+
+    SFX.play("flyIn.ogg")
+
+    toadie1:setAnimation("surprised")
+    toadie2:setAnimation("surprised")
+    toadie3:setAnimation("surprised")
+    toadie4:setAnimation("surprised")
+
+    toadie1.speedY = -4.1
+    toadie2.speedY = -4.1
+    toadie3.speedY = -4.1
+    toadie4.speedY = -4.1
+
+    Routine.wait(0.25)
+    toadie1.speedY = 0
+    toadie2.speedY = 0
+    toadie3.speedY = 0
+    toadie4.speedY = 0
+
+    Routine.wait(1.7)
+    toadie1:setAnimation("fly")
+    toadie2:setAnimation("fly")
+    toadie3:setAnimation("fly")
+    toadie4:setAnimation("fly")
+
+    toadie1.direction = -toadie1.direction
+    toadie2.direction = -toadie2.direction
+    toadie3.direction = -toadie3.direction
+    toadie4.direction = -toadie4.direction
+
+    Routine.wait(0.25)
+    kamek:remove()
+
+    toadie1.speedX = -5
+    toadie2.speedX = -5
+    toadie3.speedX = -5
+    toadie4.speedX = -5
+
+    Routine.wait(2)
+    toadie1:remove()
+    toadie2:remove()
+    toadie3:remove()
+    toadie4:remove()
+
+    Routine.wait(2)
 end
 
 function intro:stopFunc()
