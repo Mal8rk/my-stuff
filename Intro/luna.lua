@@ -4,7 +4,12 @@ local cutscenePal = require("cutscenePal")
 local handycam = require("handycam")
 local littleDialogue = require("littleDialogue")
 local distortionEffects = require("distortionEffects")
+local warpTransition = require("warpTransition")
 local easing = require("ext/easing")
+
+warpTransition.sameSectionTransition = warpTransition.TRANSITION_PAN
+warpTransition.crossSectionTransition = warpTransition.TRANSITION_FADE
+warpTransition.levelStartTransition = warpTransition.TRANSITION_FADE
 
 Player.setCostume(CHARACTER_MARIO,nil,true)
 player:transform(CHARACTER_MARIO)
@@ -97,6 +102,8 @@ local function spawnToadie1Actor(x,y)
             talk = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 5},
 
             surprised = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 5},
+
+            tiny = {1,2, defaultFrameY = 4, frameDelay = 3},
         },
         startAnimation = "fly",
     }
@@ -253,6 +260,35 @@ local function spawnBowserActor(x,y)
 
     -- Add it to the scene's data table (which is of course optional) and return.
     intro.data.bowserActor = actor
+
+    return actor
+end
+
+local function spawnPeachCastle(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("peach_castle.png")
+    actor.spriteOffset = vector(4,30)
+    actor:setFrameSize(256,256) -- each frame is 56x54
+    actor:setSize(64,64) -- hitbox size is 32x48
+
+    actor.priority = -10
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            normal = {1, defaultFrameY = 1},
+
+            attacked = {2,3,4,5,4,3, defaultFrameY = 1, frameDelay = 5},
+        },
+        startAnimation = "normal",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.castleActor = actor
 
     return actor
 end
@@ -494,6 +530,8 @@ function intro:mainRoutineFunc()
     kamek:setAnimation("idle")
     Effect.spawn(772, kamek.x - 40, kamek.y - 40, player.section)
 
+    kamek.y = kamek.y - 16
+
     kamek.useAutoFloor = false
     kamek.gravity = 0
 
@@ -568,7 +606,47 @@ function intro:mainRoutineFunc()
     toadie3:remove()
     toadie4:remove()
 
-    Routine.wait(2)
+    Routine.wait(0.25)
+    local warp = Layer.get("warp")
+    warp:show(true)
+
+    local castle = spawnPeachCastle(-179616, -180256)
+    castle:setAnimation("normal")
+
+    Routine.wait(1)
+    local kamek = spawnKamekActor(-179200, -180448)
+
+    kamek:setAnimation("flySmall")
+    kamek.direction = DIR_RIGHT
+
+    kamek.gravity = 0
+
+    kamek.speedX = -3.8
+    kamek.speedY = 1.8
+
+    Audio.MusicFadeOut(player.section, 4000)
+
+    Routine.wait(0.7)
+    local toadies = spawnToadie1Actor(-179200, -180448)
+
+    toadies:setAnimation("tiny")
+    toadies.direction = DIR_RIGHT
+
+    toadies.speedX = -3.8
+    toadies.speedY = 1.8
+
+    Routine.wait(1)
+    kamek:remove()
+
+    Routine.wait(0.7)
+    toadies:remove()
+
+    Routine.wait(1.3)
+    castle:setAnimation("attacked")
+
+    Audio.MusicChange(1, "Intro/Super Princess Peach OST_ Bowser Captures the Bros.ogg")
+
+    Routine.wait(5)
 end
 
 function intro:stopFunc()

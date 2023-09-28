@@ -73,7 +73,7 @@ npcManager.registerHarmTypes(npcID,
 		--[HARM_TYPE_TAIL]=10,
 		--[HARM_TYPE_SPINJUMP]=10,
 		--[HARM_TYPE_OFFSCREEN]=10,
-		[HARM_TYPE_SWORD]=10,
+		[HARM_TYPE_SWORD]=753,
 	}
 );
 

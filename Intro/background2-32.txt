@@ -1,0 +1,23 @@
+fill-color = #009cff
+
+[clouds]
+img="clouds.png"
+alignY=BOTTOM
+repeatX=true
+repeatY=true
+depth=90
+speedX=-0.15
+opacity=1
+y=-48
+
+[hills]
+img="hills_bg.png"
+alignY=BOTTOM
+repeatX=true
+depth=100
+
+[bushes]
+img="mushrooms_fg.png"
+alignY=BOTTOM
+repeatX=true
+depth=90

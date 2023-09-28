@@ -4814,7 +4814,7 @@ end
 
 yoshi.generalSettings = {
     -- Can be BABY_MARIO or HEARTS
-    healthSystem = HEALTH_SYSTEM.BABY_MARIO,
+    healthSystem = HEALTH_SYSTEM.HEARTS,
 
     walkSpeed = 5.2,
     runSpeed = 5.2,

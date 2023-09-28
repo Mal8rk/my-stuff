@@ -272,7 +272,7 @@ function wildPiranha.onTickEndNPC(v)
 				data.renderscale = data.renderscale-0.03
 				else
 					if data.mystem.isValid then
-						Effect.spawn(753, data.mystem.x, data.mystem.y)
+						Effect.spawn(753, data.mystem.x - 40, data.mystem.y - 40)
 						data.mystem:kill(HARM_TYPE_OFFSCREEN)
 					end
 					v:kill(HARM_TYPE_OFFSCREEN)
@@ -307,7 +307,7 @@ function wildPiranha.onNPCHarm(eventObj, v, killReason, culprit)
 	
 	if data.state == STATE_DORMANT then
 		if data.mystem.isValid then
-				Effect.spawn(753, data.mystem.x, data.mystem.y)
+				Effect.spawn(753, data.mystem.x - 40, data.mystem.y - 40)
 				data.mystem:kill(HARM_TYPE_OFFSCREEN)
 		end
 		return

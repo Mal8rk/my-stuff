@@ -80,12 +80,12 @@ npcManager.registerHarmTypes(npcID,
 
 
 function sampleNPC.onInitAPI()
-	npcManager.registerEvent(npcID, sampleNPC, "onTickNPC")
+	npcManager.registerEvent(npcID, sampleNPC, "onTickEndNPC")
 	npcManager.registerEvent(npcID, sampleNPC, "onDrawNPC")
 	registerEvent(sampleNPC, "onNPCKill")
 end
 
-function sampleNPC.onTickNPC(v)
+function sampleNPC.onTickEndNPC(v)
 
 	if Defines.levelFreeze then return end
 	
@@ -162,8 +162,6 @@ function sampleNPC.onDrawNPC(v)
 	local data = v.data
 
 	if v:mem(0x12A,FIELD_WORD) <= 0 then return end
-
-	if data.stretchTimer == nil then return end
 
 	local priority = -45
 	if config.priority then

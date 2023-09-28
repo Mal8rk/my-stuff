@@ -20,15 +20,15 @@ flightlessGoonie.VULNERABLE_HARM_TYPE = {
 	
 flightlessGoonie.HARM_TYPE_EFFECT_MAP = {
 		[HARM_TYPE_JUMP]=753,
-		[HARM_TYPE_FROMBELOW]=10,
+		[HARM_TYPE_FROMBELOW]=753,
 		[HARM_TYPE_NPC]=753,
 		[HARM_TYPE_PROJECTILE_USED]=753,
 		[HARM_TYPE_LAVA]={id=13, xoffset=0.5, xoffsetBack = 0, yoffset=1, yoffsetBack = 1.5},
 		--[HARM_TYPE_HELD]=10,
-		[HARM_TYPE_TAIL]=10,
-		[HARM_TYPE_SPINJUMP]=10,
+		[HARM_TYPE_TAIL]=753,
+		[HARM_TYPE_SPINJUMP]=753,
 		--[HARM_TYPE_OFFSCREEN]=10,
-		[HARM_TYPE_SWORD]=10,
+		[HARM_TYPE_SWORD]=753,
 	}
 
 function flightlessGoonie.onInitAPI()

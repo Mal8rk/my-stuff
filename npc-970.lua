@@ -446,8 +446,7 @@ function sampleNPC.onTickEndNPC(v)
 		    SFX.play(41)
 		    SFX.play(smwbosspoof)
 			v:kill(HARM_TYPE_OFFSCREEN)
-			Effect.spawn(753, v.x + 48, v.y + 80)
-			Effect.spawn(752, v.x + 48, v.y + 80)
+			Effect.spawn(753, v.x - 48, v.y - 40)
 		    local key = NPC.spawn(971, v.x + 24, v.y + 32)
 			key.speedY = -8
 		end

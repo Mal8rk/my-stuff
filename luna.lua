@@ -6,6 +6,7 @@ local extendedKoopas = require("extendedKoopas")
 local customCamera = require("customCamera")
 local klonoa = require("characters/klonoa")
 local hudoverride = require ("hudoverride")
+local warioHealth = require("warioHealth")
 local sinelayers = require("sinelayers")
 local prismPause = require("pauseMenu")
 
