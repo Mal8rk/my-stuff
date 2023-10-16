@@ -20,6 +20,8 @@ local intro = cutscenePal.newScene("intro")
 
 intro.canSkip = false
 
+Graphics.activateHud(false)
+
 local function createDialogueBox(speakerObj,text)
 	local box = littleDialogue.create{text = text,speakerObj = speakerObj,pauses = false}
 
@@ -562,6 +564,7 @@ function intro:mainRoutineFunc()
     Routine.wait(0.25)
     kamek:setAnimation("fly")
     kamek.speedX = -8
+    kamek.speedY = 0
 
     SFX.play("flyIn.ogg")
 
@@ -643,17 +646,60 @@ function intro:mainRoutineFunc()
 
     Routine.wait(1.3)
     castle:setAnimation("attacked")
+    SFX.play("MLTP Sounds/Mario 1.ogg")
+    Defines.earthquake = 12
 
     Audio.MusicChange(1, "Intro/Super Princess Peach OST_ Bowser Captures the Bros.ogg")
 
-    Routine.wait(5)
-end
+    Routine.wait(1.8)
+    SFX.play("MLTP Sounds/Luigi 1.ogg")
+    Defines.earthquake = 12
 
-function intro:stopFunc()
-    -- This function is run whenever the cutscene stops, whether it ends naturally or it is skipped.
-    handycam[1]:release() -- releases the camera from handycam's control. important if you're using handycam for the cutscene!
-end
+    Routine.wait(1.8)
+    SFX.play("MLTP Sounds/Toad 1.wav")
+    Defines.earthquake = 12
 
+    Routine.wait(1.8)
+    SFX.play("MLTP Sounds/Peach 1.wav")
+    Defines.earthquake = 12
+
+    Routine.wait(1.8)
+    SFX.play(4)
+    Defines.earthquake = 7
+
+    Routine.wait(0.9)
+    SFX.play(39)
+    Defines.earthquake = 7
+
+    Routine.wait(0.9)
+    SFX.play("Explosion.wav")
+    Defines.earthquake = 6
+
+    Routine.wait(0.7)
+    SFX.play("Explosion.wav")
+    Defines.earthquake = 6
+
+    Routine.wait(0.8)
+    SFX.play("MLTP Sounds/Mario 2.ogg")
+    SFX.play("MLTP Sounds/Luigi 2.ogg")
+    SFX.play("MLTP Sounds/Toad 2.wav")
+    SFX.play("MLTP Sounds/Peach 2.wav")
+    castle:setAnimation("normal")
+    Defines.earthquake = 10
+
+    Routine.wait(3)
+    SFX.play("Oh no.ogg")
+    local warp2 = Layer.get("warp2")
+    warp2:show(true)
+
+    Routine.wait(0.8)
+    SFX.play("MLTP Sounds/Mario 2.ogg")
+    SFX.play("MLTP Sounds/Luigi 2.ogg")
+    SFX.play("MLTP Sounds/Toad 2.wav")
+    SFX.play("MLTP Sounds/Peach 2.wav")
+
+    Routine.wait(1)
+end
 
 -- Trigger the cutscene using an event
 function onEvent(eventName)

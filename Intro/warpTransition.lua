@@ -458,7 +458,7 @@ warpTransition.transitionSpeeds = {
     [warpTransition.TRANSITION_IRIS_OUT ] = 14, -- How quickly the radius of the iris out shrinks.
     [warpTransition.TRANSITION_MOSAIC   ] = 24, -- How long it takes to fade in/out.
     [warpTransition.TRANSITION_CROSSFADE] = 24, -- How long it takes to fade in/out.
-    [warpTransition.TRANSITION_MELT     ] = 200, -- How long it takes one "slice" to go down.
+    [warpTransition.TRANSITION_MELT     ] = 100, -- How long it takes one "slice" to go down.
     [warpTransition.TRANSITION_SWIRL    ] = 90, -- How many frames it takes to complete the transition.
 }
 

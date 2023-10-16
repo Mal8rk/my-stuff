@@ -151,27 +151,29 @@ function warioHealth.onDraw()
 	else
 		Graphics.sprites.hardcoded["48-0"].img = nil
 	end
-	Graphics.draw{
-		type = RTYPE_IMAGE,
-		image = HPBar,
-		priority = 5,
-		x =  (16 + healthOffsetX) + (56.875 - (6.875 * warioHealth.HPCap)),-- 340 + (8 * warioHealth.HPCap),--468 - (16 * warioHealth.HPCap), -- 340 originally
-		y = 27 + healthOffsetY,
-		sourceWidth = 32  * warioHealth.HPCap,
-		sourceHeight = 32,
-		sourceY = 32 * (SaveData.warioHP),
-	}
-	if not warioHealth.coinBarToggle then return end
-	Graphics.draw{
-		type = RTYPE_IMAGE,
-		image = RegenBar,
-		priority = 5,
-		x = (16 + healthOffsetX),
-		y = 52 + healthOffsetY,
-		sourceHeight = 32,
-		sourceY = 32 * coinBar,
-	}
-	--SFX.play(26)
+	if Graphics.isHudActivated() then
+		Graphics.draw{
+			type = RTYPE_IMAGE,
+			image = HPBar,
+			priority = 5,
+			x =  (16 + healthOffsetX) + (56.875 - (6.875 * warioHealth.HPCap)),-- 340 + (8 * warioHealth.HPCap),--468 - (16 * warioHealth.HPCap), -- 340 originally
+			y = 27 + healthOffsetY,
+			sourceWidth = 32  * warioHealth.HPCap,
+			sourceHeight = 32,
+			sourceY = 32 * (SaveData.warioHP),
+		}
+		if not warioHealth.coinBarToggle then return end
+		Graphics.draw{
+			type = RTYPE_IMAGE,
+			image = RegenBar,
+			priority = 5,
+			x = (16 + healthOffsetX),
+			y = 52 + healthOffsetY,
+			sourceHeight = 32,
+			sourceY = 32 * coinBar,
+		}
+		--SFX.play(26)
+	end
 end
 
 function warioHealth.onPostBlockHit(hitBlock,fromUpper,playerOrNil)
