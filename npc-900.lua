@@ -1,9 +1,10 @@
 --NPCManager is required for setting basic NPC properties
 local npcManager = require("npcManager")
+local npcutils = require("npcs/npcutils")
+local redCoinAI = require("collectibleLibs/redCoin")
 
 --Create the library table
 local sampleNPC = {}
-local counCount = {}
 --NPC_ID is dynamic based on the name of the library file
 local npcID = NPC_ID
 
@@ -55,14 +56,36 @@ local sampleNPCSettings = {
 	isinteractable=true,
 }
 
-local coinCount = 0
+local UNCOLLECTED = 0
+local SAVED = 1
+local COLLECTED = 2
+local COLLECTED_WEAK = 3
 
 --Applies NPC settings
 npcManager.setNpcSettings(sampleNPCSettings)
 
 --Register events
 function sampleNPC.onInitAPI()
-	registerEvent(sampleNPC, "onNPCKill")
+	npcManager.registerEvent(npcID, sampleNPC, "onStartNPC")
+	npcManager.registerEvent(npcID, sampleNPC, "onDrawNPC")
+	npcManager.registerEvent(npcID, sampleNPC, "onTickEndNPC")
+	registerEvent(sampleNPC, "onNPCKill", "onNPCKill")
+	registerEvent(sampleNPC, "onStart", "onStart", false)
+end
+
+function sampleNPC.onStartNPC(coin)
+	if coin.ai2 == nil then coin.ai2 = UNCOLLECTED end
+	redCoinAI.registerAlive(coin.ai2)
+end
+
+function sampleNPC.onStart()
+	redCoinAI.init()
+end
+
+function sampleNPC.onTickEndNPC(v)
+	if Defines.levelFreeze then return end
+
+	v.speedX, v.speedY = npcutils.getLayerSpeed(v)
 end
 
 local coinsPointer = 0x00B2C5A8
@@ -82,25 +105,22 @@ local function addCoins(amount)
     end
 end
 
---Spawn effects and coins.
-function sampleNPC.onNPCKill(eventObj,v,reason,culprit)
-
-    local config = NPC.config[v.id]
-
-	if config.value then
-		addCoins(config.value)
+function sampleNPC.onDrawNPC(coin)
+	local CoinData = redCoinAI.getTemporaryData()
+	if coin.ai2 == nil then coin.ai2 = UNCOLLECTED end
+	if CoinData[coin.ai2] == nil then
+		CoinData[coin.ai2] = UNCOLLECTED
 	end
+	redCoinAI.registerAlive(coin.ai2)
+end
 
-	if v.id ~= npcID then return end
-	Effect.spawn(npcID, v.x, v.y)
-	Effect.spawn(765, v.x+16, v.y+16)
-	SFX.play("Redcoin.wav")
-	coinCount = coinCount + 1
-
-	    if coinCount >= 20 then
-		     SFX.play("Allred.wav")
+--Spawn effects and coins.
+function sampleNPC.onNPCKill(obj, v, r)
+	if v.id == npcID and r == 9 then
+		if (npcManager.collected(v, r) or v:mem(0x138, FIELD_WORD) == 5) then
+			redCoinAI.collect(v)
 		end
 	end
-
+end
 --Gotta return the library table!
 return sampleNPC

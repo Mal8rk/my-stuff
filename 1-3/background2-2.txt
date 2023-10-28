@@ -11,9 +11,3 @@ img="mushrooms_fg_alt.png"
 alignY=BOTTOM
 repeatX=true
 depth=400
-
-[hills]
-img="hills_fg.png"
-alignY=BOTTOM
-repeatX=true
-depth=80

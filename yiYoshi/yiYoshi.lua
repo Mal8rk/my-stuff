@@ -2531,6 +2531,13 @@ do
                 return
             end
 
+            if RNG.randomInt(1,4) == 1 then
+                local e = Effect.spawn(80, p.x + RNG.randomInt(0,p.width), p.y + RNG.randomInt(0,p.height))
+        
+                e.x = e.x - e.width *0.5
+                e.y = e.y - e.height*0.5
+            end
+
             data.groundPoundTimer = data.groundPoundTimer + 1
 
             if isOnGroundRedigit() then
@@ -2540,6 +2547,8 @@ do
                 Defines.earthquake = 6
 
                 SFX.play(yoshi.groundPoundSettings.landSound)
+
+                Effect.spawn(760, player.x-42, player.y+16, player.section)
             else
                 p.speedY = yoshi.groundPoundSettings.fallSpeed
 

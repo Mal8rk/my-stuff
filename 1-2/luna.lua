@@ -1,4 +1,4 @@
-
+require("collectibleLibs/level E-coins")
 function onEvent(eventName)
     if eventName == "l" then
        Effect.spawn(772, -176064 + -40, -182720 + -40)

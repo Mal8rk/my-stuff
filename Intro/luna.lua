@@ -1,11 +1,9 @@
 local animationPal = require("animationPal")
 local cutscenePal = require("cutscenePal")
 
-local handycam = require("handycam")
 local littleDialogue = require("littleDialogue")
 local distortionEffects = require("distortionEffects")
 local warpTransition = require("warpTransition")
-local easing = require("ext/easing")
 
 warpTransition.sameSectionTransition = warpTransition.TRANSITION_PAN
 warpTransition.crossSectionTransition = warpTransition.TRANSITION_FADE
@@ -21,6 +19,8 @@ local intro = cutscenePal.newScene("intro")
 intro.canSkip = false
 
 Graphics.activateHud(false)
+
+local finalFadeOut = 0
 
 local function createDialogueBox(speakerObj,text)
 	local box = littleDialogue.create{text = text,speakerObj = speakerObj,pauses = false}
@@ -53,10 +53,10 @@ local function spawnKamekActor(x,y)
             idle = {1, defaultFrameY = 1},
 
             stop = {1, defaultFrameY = 2},
-            turn1 = {1,2, defaultFrameY = 2, frameDelay = 6, loops = false},
-            turn2 = {2,1, defaultFrameY = 2, frameDelay = 6, loops = false},
+            turn1 = {1,2, defaultFrameY = 2, frameDelay = 4, loops = false},
+            turn2 = {2,1, defaultFrameY = 2, frameDelay = 4, loops = false},
 
-            fly = {1,2, defaultFrameY = 3,frameDelay = 4},
+            fly = {1,2, defaultFrameY = 3,frameDelay = 2.6},
 
             talk = {1,2,3,2, defaultFrameY = 4, frameDelay = 4},
 
@@ -266,6 +266,84 @@ local function spawnBowserActor(x,y)
     return actor
 end
 
+local function spawnGoombaActor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("goomba.png")
+    actor.spriteOffset = vector(0,0)
+    actor.spritePivotOffset = vector(0,-24)
+    actor:setFrameSize(42,42) -- each frame is 56x54
+    actor:setSize(32,48) -- hitbox size is 32x48
+
+    actor.useAutoFloor = true
+    actor.gravity = 0.22
+    actor.terminalVelocity = 8
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            idle = {1, defaultFrameY = 1},
+            jump = {2, defaultFrameY = 1},
+
+            run = {1,2,3,4, defaultFrameY = 2, frameDelay = 1.4},
+        },
+        startAnimation = "idle",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.goombaActor = actor
+
+    return actor
+end
+
+local function spawnYoshiActor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("yoshi.png")
+    actor.spriteOffset = vector(0,17)
+    actor.spritePivotOffset = vector(0,-24)
+    actor:setFrameSize(128,128) -- each frame is 56x54
+    actor:setSize(48,32) -- hitbox size is 32x48
+
+    actor.useAutoFloor = true
+    actor.gravity = 0.26
+    actor.terminalVelocity = 8
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            idle = {1,2,3,4,5,6,7, defaultFrameY = 1, frameDelay = 6},
+
+            turn1 = {1,2,3,4, defaultFrameY = 2, frameDelay = 2, loops = false},
+            turn2 = {4,3,2,1, defaultFrameY = 2, frameDelay = 2, loops = false},
+
+            walk = {1,2,3,4,5,6,7,8,9,10, defaultFrameY = 3,frameDelay = 5},
+
+            run = {1,2, defaultFrameY = 4, frameDelay = 4},
+
+            hurt = {1, defaultFrameY = 5},
+            spinning = {2,3,4,5,6,7, defaultFrameY = 5,frameDelay = 3},
+
+            lookUp = {1, defaultFrameY = 6},
+            jump = {2, defaultFrameY = 6},
+            cling = {3,4,5,6,5,4, defaultFrameY = 6, frameDelay = 2},
+        },
+        startAnimation = "idle",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.yoshiActor = actor
+
+    return actor
+end
+
 local function spawnPeachCastle(x,y)
     -- Spawn an actor.
     -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
@@ -295,10 +373,42 @@ local function spawnPeachCastle(x,y)
     return actor
 end
 
+local function spawnJailActor(x,y)
+    -- Spawn an actor.
+    -- It is a "child" of the scene rather than a global one, so it will be removed when the scene ends.
+    local actor = intro:spawnChildActor(x,y)
+
+    -- Set up properties for the actor
+    actor.image = Graphics.loadImageResolved("hero_jail.png")
+    actor:setFrameSize(256,256) -- each frame is 56x54
+    actor:setSize(128,128) -- hitbox size is 32x48
+
+    -- Set up an actor's animations, using the same arguments as animationPal.createAnimator.
+    actor:setUpAnimator{
+        animationSet = {
+            --Flying animations
+            fly = {1,2,3,4,3,2, defaultFrameY = 1, frameDelay = 4},
+
+            intrigued = {1,2,3,4,3,2, defaultFrameY = 2, frameDelay = 4},
+
+            flyWith3 = {1,2,3,4,3,2, defaultFrameY = 3, frameDelay = 4},
+
+            intriguedWith3 = {1,2,3,4,3,2, defaultFrameY = 4, frameDelay = 4},
+        },
+        startAnimation = "fly",
+    }
+
+    -- Add it to the scene's data table (which is of course optional) and return.
+    intro.data.jailActor = actor
+
+    return actor
+end
+
 function intro:mainRoutineFunc()
     player.direction = DIR_RIGHT
     player.speedX = 0
 
+    
     local kamek = spawnKamekActor(-199776, -200128)
     local bowser = spawnBowserActor(-199488, -200128)
 
@@ -391,14 +501,49 @@ function intro:mainRoutineFunc()
 
     magic:remove()
 
+    self:runChildRoutine(function()
+        while bowser.isValid do
+            if RNG.randomInt(1,10) == 1 then
+                local e = Effect.spawn(772, bowser.x + RNG.randomInt(0,bowser.width), bowser.y + RNG.randomInt(0,bowser.height))
+        
+                e.x = e.x - e.width *0.5
+                e.y = e.y - e.height*0.5
+
+                SFX.play(41)
+            end
+
+            Routine.skip()
+        end
+    end)
+
     SFX.play("Explosion.wav")
     SFX.play("Bowser 4.wav")
 
-    bowser.useAutoFloor = false
-    bowser.speedX = 2.4*bowser.direction
-    bowser.speedY = -10
+    Routine.wait(3.8)
+    Effect.spawn(773, bowser.x - 80, bowser.y - 34, player.section)
+    local goomba = spawnGoombaActor(bowser.x + 32, bowser.y + 128)
+    goomba.direction = DIR_RIGHT
 
-    Routine.wait(2.9)
+    bowser:remove()
+
+    Routine.wait(1)
+    goomba.direction = DIR_LEFT
+    Routine.wait(0.54)
+    goomba.direction = DIR_RIGHT
+    Routine.wait(1)
+    goomba.direction = DIR_LEFT
+
+    SFX.play(1)
+
+    goomba:jumpAndWait{
+        goalX = -199360,goalY = -200192,setDirection = false,resetSpeed = true,setPosition = true,
+        riseAnimation = "jump",landAnimation = "run",
+    }
+
+    goomba.speedX = 7
+
+    Routine.wait(1.4)
+
     kamek:setAnimation("walking")
 
     bowser:remove()
@@ -530,7 +675,7 @@ function intro:mainRoutineFunc()
     toadie4:setAnimation("fly")
 
     kamek:setAnimation("idle")
-    Effect.spawn(772, kamek.x - 40, kamek.y - 40, player.section)
+    Effect.spawn(772, kamek.x - 34, kamek.y - 40, player.section)
 
     kamek.y = kamek.y - 16
 
@@ -573,10 +718,10 @@ function intro:mainRoutineFunc()
     toadie3:setAnimation("surprised")
     toadie4:setAnimation("surprised")
 
-    toadie1.speedY = -4.1
-    toadie2.speedY = -4.1
-    toadie3.speedY = -4.1
-    toadie4.speedY = -4.1
+    toadie1.speedY = -5.1
+    toadie2.speedY = -5.1
+    toadie3.speedY = -5.1
+    toadie4.speedY = -5.1
 
     Routine.wait(0.25)
     toadie1.speedY = 0
@@ -692,13 +837,288 @@ function intro:mainRoutineFunc()
     local warp2 = Layer.get("warp2")
     warp2:show(true)
 
-    Routine.wait(0.8)
+    Routine.wait(0.5)
     SFX.play("MLTP Sounds/Mario 2.ogg")
     SFX.play("MLTP Sounds/Luigi 2.ogg")
     SFX.play("MLTP Sounds/Toad 2.wav")
     SFX.play("MLTP Sounds/Peach 2.wav")
 
+    Routine.wait(2)
+    local warp3 = Layer.get("warp3")
+    warp3:show(true)
+
+    Routine.wait(0.9)
+
+    local yoshi = spawnYoshiActor(-160064, -160128)
+    yoshi.direction = DIR_LEFT
+
+    yoshi:walkAndWait{
+        goal = -159808,speed = 1,setDirection = false,
+        walkAnimation = "walk",stopAnimation = "idle",
+    }
+
     Routine.wait(1)
+    yoshi:setAnimation("turn1")
+    Routine.wait(0.8)
+    yoshi:setAnimation("turn2")
+    yoshi:waitUntilAnimationFinished()
+
+    Routine.wait(0.1)
+    yoshi:setAnimation("idle")
+    Audio.MusicFadeOut(player.section, 2000)
+
+    Routine.wait(2)
+    local kamek = spawnKamekActor(-160064, -160448)
+    kamek.direction = DIR_LEFT
+    kamek.gravity = 0
+    kamek:setAnimation("fly")
+    kamek.speedX = 10
+
+    SFX.play("flyIn.ogg")
+
+    yoshi:setAnimation("lookUp")
+    Audio.MusicChange(2, "Intro/Super Princess Peach OST_ Pre-Boss.ogg")
+
+    Routine.wait(3)
+    yoshi:setAnimation("turn1")
+    SFX.play("MLTP Sounds/Mario 2.ogg")
+    SFX.play("MLTP Sounds/Luigi 2.ogg")
+    SFX.play("MLTP Sounds/Toad 2.wav")
+    SFX.play("MLTP Sounds/Peach 2.wav")
+
+    Routine.wait(2)
+    yoshi:setAnimation("lookUp")
+    SFX.play("MLTP Sounds/Mario 3.ogg")
+    SFX.play("MLTP Sounds/Luigi 4.ogg")
+    SFX.play("MLTP Sounds/Toad 3.wav")
+    SFX.play("MLTP Sounds/Peach 3.wav")
+
+    local jail = spawnJailActor(-160064, -160288)
+    jail.direction = DIR_RIGHT
+    jail:setAnimation("flyWith3")
+    jail.speedX = 9
+
+    Routine.wait(2.4)
+    yoshi:setAnimation("hurt")
+    SFX.play(49)
+
+    Routine.wait(1)
+    local toadie = spawnToadie1Actor(-160064, -160318)
+    toadie.direction = DIR_LEFT
+    toadie:setAnimation("fly")
+    toadie.speedX = 9.4
+
+    yoshi:setAnimation("run")
+    yoshi.speedX = 4
+
+    Routine.wait(0.25)
+    SFX.play(1)
+    yoshi:setAnimation("jump")
+    yoshi.speedY = -9.6
+
+    Routine.wait(0.56)
+    yoshi:setAnimation("cling")
+    yoshi.gravity = 0
+    yoshi.speedY = 0
+    yoshi.speedX = 0
+
+    toadie.speedX = 0
+    toadie.isInvisible = 0
+
+    SFX.play("climbing_5.ogg")
+
+    local yoshiCling = self:runChildRoutine(function()
+        while yoshi.isValid do
+            yoshi.speedY = math.cos(lunatime.tick() / 3) * 1.5
+
+            Routine.skip()
+        end
+    end)
+
+    Routine.wait(0.3)
+    SFX.play("Toadie talks.wav")
+
+    Routine.wait(0.9)
+    createDialogueBox(vector(yoshi.x,yoshi.y),"<boxStyle yi>get off me!!!")
+
+    Routine.wait(0.1)
+    local magic = spawnMagicActor(-159168, -160324)
+    magic:setAnimation("idle")
+    magic.speedX = -5.3
+    SFX.play(41)
+
+    self:runChildRoutine(function()
+        while magic.isValid do
+            if RNG.randomInt(1,4) == 1 then
+                local e = Effect.spawn(80, magic.x + RNG.randomInt(0,magic.width), magic.y + RNG.randomInt(0,magic.height))
+        
+                e.x = e.x - e.width *0.5
+                e.y = e.y - e.height*0.5
+            end
+
+            Routine.skip()
+        end
+    end)
+
+    Routine.wait(1.3)
+    yoshiCling:abort()
+
+    Defines.earthquake = 5
+    distortionEffects.create{x = magic.x+(magic.width/2),y = magic.y+(magic.height/2)}
+    SFX.play("Explosion.wav")
+    SFX.play(49)
+
+    magic:remove()
+
+    yoshi:setAnimation("hurt")
+    yoshi.gravity = 0.26
+    yoshi.speedY = -5.5
+    yoshi.speedX = -2
+
+    toadie.isInvisible = false
+    toadie.speedX = 5
+
+    Routine.wait(0.25)
+    toadie.speedX = 0
+    toadie.direction = DIR_RIGHT
+
+    Routine.wait(0.7)
+    yoshi:setAnimation("spinning")
+    yoshi.speedX = 0
+
+    Routine.wait(0.9)
+    kamek.x = -159168
+    kamek.y = -160448
+    kamek.direction = DIR_RIGHT
+    kamek.speedX = -9.4
+    kamek:setAnimation("stop")
+
+    yoshi:setAnimation("lookUp")
+
+    local kamekStop = self:runChildRoutine(function()
+        while kamek.isValid do
+            kamek.speedX = kamek.speedX + 0.25
+            if kamek.speedX > 0 then
+                kamek.speedX = 0
+                kamek:setAnimation("idle")
+                kamek.speedY = math.cos(lunatime.tick() / 32) * 0.4
+            end
+
+            Routine.skip()
+        end
+    end)
+
+    Routine.wait(1)
+    jail.x = -159168
+    jail.y = -160248
+    jail.direction = DIR_RIGHT
+    jail.speedX = -10.3
+    jail:setAnimation("flyWith3")
+
+    local jailStop = self:runChildRoutine(function()
+        while jail.isValid do
+            jail.speedX = jail.speedX + 0.25
+            if jail.speedX > 0 then
+                jail.speedX = 0
+                jail:setAnimation("intriguedWith3")
+            end
+
+            Routine.skip()
+        end
+    end)
+
+    Routine.wait(0.9)
+    SFX.play("MLTP Sounds/Mario 4.ogg")
+    SFX.play("MLTP Sounds/Luigi 3.ogg")
+    SFX.play("MLTP Sounds/Toad 4.wav")
+    SFX.play("MLTP Sounds/Peach 4.wav")
+
+    yoshi:setAnimation("idle")
+
+    Routine.wait(0.5)
+    toadie.speedY = 4
+    toadie.speedX = 3
+    toadie.direction = DIR_LEFT
+
+    Routine.wait(0.64)
+    jailStop:abort()
+    jail:setAnimation("intrigued")
+    toadie:remove()
+
+    Routine.wait(1)
+    yoshi:setAnimation("lookUp")
+    Audio.MusicFadeOut(player.section, 1000)
+
+    self:runChildRoutine(function()
+        while kamek.isValid do
+            kamek.speedY = math.cos(lunatime.tick() / 32) * 0.4
+
+            Routine.skip()
+        end
+    end)
+    
+    kamek:setAnimation("talk")
+    kamekStop:abort()
+
+    for i = 1,2 do
+		SFX.play("thatSound.ogg")
+
+		Routine.wait(0.5)
+	end
+
+    Routine.wait(0.1)
+    Audio.MusicChange(2, "music/Kamek's Theme.ogg")
+    Routine.wait(0.1)
+    createDialogueBox(vector(kamek.x,kamek.y),"<boxStyle yi>who are you???? do not follow us")
+
+    Routine.wait(0.1)
+    kamek:setAnimation("turn1")
+    kamek:waitUntilAnimationFinished()
+
+    Routine.wait(0.1)
+    kamek.direction = DIR_LEFT
+    kamek:setAnimation("turn2")
+    kamek:waitUntilAnimationFinished()
+
+    Routine.wait(0.1)
+    Audio.MusicFadeOut(player.section, 1000)
+    kamek:setAnimation("fly")
+    kamek.speedX = 10
+
+    Routine.wait(0.54)
+    SFX.play("MLTP Sounds/Mario 3.ogg")
+    SFX.play("MLTP Sounds/Luigi 4.ogg")
+    SFX.play("MLTP Sounds/Toad 3.wav")
+    SFX.play("MLTP Sounds/Peach 3.wav")
+
+    yoshi:setAnimation("idle")
+
+    jail:setAnimation("fly")
+    jail.speedX = 10
+
+    Routine.wait(1.5)
+    yoshi:setAnimation("hurt")
+    SFX.play(49)
+
+    Routine.wait(1)
+    yoshi:setAnimation("run")
+    yoshi.speedX = 7
+
+    Routine.wait(4)
+    self:runChildRoutine(function()
+        while (finalFadeOut < 1) do
+            finalFadeOut = math.min(1,finalFadeOut + 0.032)
+            Routine.skip(true)
+        end
+    end)
+    Routine.wait(0.64)
+    Level.load("1-0.lvlx")
+end
+
+function onDraw()
+    if finalFadeOut > 0 then
+		Graphics.drawScreen{priority = 10,color = Color.black.. finalFadeOut}
+	end
 end
 
 -- Trigger the cutscene using an event

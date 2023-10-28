@@ -4276,7 +4276,7 @@ smwMap.playerSettings = {
     canEnterDestroyedBonusLevels = false,
 
 
-    walkSpeed = 6,
+    walkSpeed = 12,
     climbSpeed = 0.75,
 
 

@@ -58,6 +58,12 @@ local function releaseContents(v,id)
 
     local npc = NPC.spawn(id, v.x + v.width*0.5,v.y + v.height - NPC.config[id].height*0.5, v.section, false,true)
 
+    if id == 905 then
+        for i = 1,2 do
+            NPC.spawn(905, v.x + v.width*0.5,v.y + v.height - NPC.config[id].height*0.5, v.section, false,true)
+        end
+    end
+
     npc.speedY = -4
 end
 

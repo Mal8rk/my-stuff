@@ -1,0 +1,6 @@
+[1]
+onTick=TICK_KEY
+lifetime=420
+frames=1
+framespeed=4
+priority=21

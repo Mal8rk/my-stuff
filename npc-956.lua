@@ -72,12 +72,7 @@ local eggSettings = {
 
 	hitFunction = (function(v,hitNPC)
 		for i = 1,2 do
-			local star = NPC.spawn(951,v.x+v.width*0.5,v.y+v.height*0.5,v.section,false,true)
-
-			star.speedX = 0
-			star.speedY = -4
-			star.direction = -math.sign(v.speedX)
-			star.ai1 = 1
+			NPC.spawn(462,v.x+v.width*0.5,v.y+v.height*0.5,v.section,false,true)
 		end
 	end),
 }

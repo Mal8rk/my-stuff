@@ -45,7 +45,7 @@ local coinMin = Misc.resolveFile("warioHealth/regen_mini.ogg") -- sound used whe
 local coinFull = Misc.resolveFile("warioHealth/regen_full.ogg") -- sound used when wario gains a heart
 local lowHPBeep = Misc.resolveFile("warioHealth/hp_low.ogg") -- sound used when wario is at one health remaining.
 local powerupIDs = table.map{9,14,34,169,170,182,183,184,185,249,250,264,277,462}
-local coinIDs = table.map{10,33,88,103,138,152,251,252,253,258,274,411,903}
+local coinIDs = table.map{10,33,88,103,138,152,251,252,253,258,274,411,903,905}
 local heartChars = table.map{3,4,5,9,11}
 local miscChars = table.map{8,14}
 
@@ -208,6 +208,7 @@ function warioHealth.onPostPlayerHarm(harmedPlayer)
 		harmedPlayer.speedY = -4
 	end
 	harmedPlayer:mem(0x140, FIELD_WORD, 150)
+	player.forcedState = 2
 	SFX.play(76)
 end
 

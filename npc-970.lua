@@ -221,6 +221,7 @@ function sampleNPC.onTickEndNPC(v)
 		npcutils.faceNearestPlayer(v)
 	    v.speedX = sampleNPCSettings.speed * v.direction
 		v.animationFrame = math.floor(lunatime.tick() / 6) % 10
+		v.animationTimer = 0
 	    for _, p in ipairs(Player.get()) do
 		    doCollision(p, v)
 	    end
@@ -234,11 +235,13 @@ function sampleNPC.onTickEndNPC(v)
 	    data.stateTimer = data.stateTimer + 1
 		if data.stateTimer >= 1 and data.stateTimer < 20 then
 		    v.animationFrame = 3
+			v.animationTimer = 0
 			doSquish(v)
 		elseif data.stateTimer == 20 then
 		    v.speedX = sampleNPCSettings.speed * v.direction
 			v.speedY = -14
 			v.animationFrame = 0
+			v.animationTimer = 0
 			SFX.play(24)
 			data.timer = 0
 			data.squishTimer = 0
@@ -273,6 +276,7 @@ function sampleNPC.onTickEndNPC(v)
 	elseif data.state == STATE_FLIP then
 	    data.stateTimer = data.stateTimer + 1
 	    v.animationFrame = 10
+		v.animationTimer = 0
 		data.timer = 0
 		data.stretchTimer = 0
 		data.squishTimer = 0
@@ -302,12 +306,14 @@ function sampleNPC.onTickEndNPC(v)
 		if data.stateTimer >= 1 and data.stateTimer < 50 then
 		    data.rotation = 180 * v.direction
 		    v.animationFrame = math.floor(data.stateTimer / 5) % 2 + 10
+			v.animationTimer = 0
 			doHurtSquish(v)
 		elseif data.stateTimer == 52 then
 			data.timer = 0
 			data.stretchTimer = 0
 			data.squishTimer = 0
 			v.animationFrame = 3
+			v.animationTimer = 0
 			v.speedY = -5.5
 	    elseif data.stateTimer >= 53 and data.stateTimer <= 64 then
 		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
@@ -333,6 +339,7 @@ function sampleNPC.onTickEndNPC(v)
 			data.stretchTimer = 0
 			data.squishTimer = 0
 			v.animationFrame = 3
+			v.animationTimer = 0
 			v.speedY = -5.5
 	    elseif data.stateTimer >= 1 and data.stateTimer <= 13 then
 		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))
@@ -355,10 +362,12 @@ function sampleNPC.onTickEndNPC(v)
 	    data.stateTimer = data.stateTimer + 1
 		if data.stateTimer >= 1 and data.stateTimer < 20 then
 		    v.animationFrame = 3
+			v.animationTimer = 0
 			doSquish(v)
 		elseif data.stateTimer == 20 then
 			v.speedY = -14
 			v.animationFrame = 0
+			v.animationTimer = 0
 			SFX.play(24)
 			data.timer = 0
 			data.squishTimer = 0
@@ -408,12 +417,14 @@ function sampleNPC.onTickEndNPC(v)
 		if data.stateTimer >= 1 and data.stateTimer < 50 then
 		    data.rotation = 180 * v.direction
 		    v.animationFrame = math.floor(data.stateTimer / 5) % 2 + 10
+			v.animationTimer = 0
 			doHurtSquish(v)
 		elseif data.stateTimer == 52 then
 			data.timer = 0
 			data.stretchTimer = 0
 			data.squishTimer = 0
 			v.animationFrame = 12
+			v.animationTimer = 0
 			v.speedY = -5.5
 	    elseif data.stateTimer >= 53 and data.stateTimer <= 64 then
 		    data.rotation = ((data.rotation or 0) + math.deg((8.4 * v.direction)/((v.width+v.height)/-6)))

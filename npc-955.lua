@@ -71,11 +71,7 @@ local eggSettings = {
 
 
 	hitFunction = (function(v,hitNPC)
-		local coin = NPC.spawn(10,v.x+v.width*0.5,v.y+v.height*0.5,v.section,false,true)
-
-		coin.speedX = math.sign(v.speedX)*-1.5
-		coin.speedY = -4
-		coin.ai1 = 1
+		local coin = NPC.spawn(905,v.x+v.width*0.5,v.y+v.height*0.5,v.section,false,true)
 	end),
 }
 

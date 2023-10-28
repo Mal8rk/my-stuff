@@ -1,9 +1,3 @@
-local rain = SFX.open(Misc.resolveSoundFile("Falling Rain.spc"))
-
-function onStart()
-    SFX.play(rain, 0.5, 0)
-end
-
 function onEvent(eventName)
     if eventName == "log" then
        Effect.spawn(772, -158608 + -40, -160352 + -40)
