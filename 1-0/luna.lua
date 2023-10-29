@@ -1,3 +1,13 @@
+local yoshi
+pcall(function() yoshi = require("yiYoshi/yiYoshi") end)
+
+local pauseplus = require("pauseplus")
+
+pauseplus.canPause = false
+
+yoshi.introSettings.enabled = false
+
+
 function onEvent(eventName)
     if eventName == "log" then
        Effect.spawn(772, -158608 + -40, -160352 + -40)

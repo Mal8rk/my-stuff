@@ -1,6 +1,14 @@
 local littleDialogue = require("littleDialogue")
 local warpTransition = require("warpTransition")
+local pauseplus = require("pauseplus")
+
+pauseplus.canPause = false
 Graphics.activateHud(false)
+
+local yoshi
+pcall(function() yoshi = require("yiYoshi/yiYoshi") end)
+
+yoshi.introSettings.enabled = false
 
 local logo = Graphics.loadImageResolved("yoshi_journey.png")
 local mal8rk = Graphics.loadImageResolved("made_by_mal8rk.png")
@@ -26,6 +34,10 @@ local newTimer = 0
 local title = false
 
 local frame = 0
+
+function onStart()
+    GameData.seenTitle = true
+end
 
 function onTick()
     timer = timer + 1
@@ -69,8 +81,6 @@ function onTick()
         end
     end
 
-    Text.print(newTimer, 8, 8)
-
     if triggerExit then
         Graphics.drawImageWP(logo, x, y - 80, alpha2, -50)
         frame = math.floor(lunatime.tick() / 5) % 2
@@ -79,33 +89,26 @@ function onTick()
             newTimer = newTimer + 1
 
             if newTimer > 32 then
-                Graphics.drawScreen{color = Color.black.. opacity,priority = 2}
+                Graphics.drawScreen{color = Color.black.. opacity,priority = 48}
                 Audio.MusicFadeOut(player.section, 100)
                 if opacity < 1 then
                     opacity = opacity + 0.08
                 end
             end
             if newTimer == 53 then
-                if SaveData.introFinished then
+                if SaveData.hasSeenIntro then
                     Level.load("map.lvlx")
                 else
-                    stopTimer = true
-                    littleDialogue.create{
-                        text = "Have you played this game before?<question playedBefore>",
-                        pauses = false,
-                        forcedPosX = 400,
-                        forcedPosY = 300,
-                        settings = {typewriterEnabled = false}
-                    }
+                    Level.load("Intro.lvlx")
                 end
             end
         end
 
-        if hasPlayedBefore ~= nil then
+        if SaveData.hasSeenIntro ~= nil then
             stopTimer = false
         end
-        if newTimer == 100 then
-            if hasPlayedBefore then
+        if newTimer == 52 then
+            if SaveData.hasSeenIntro then
                 playedBefore()
             else
                 notPlayedBefore()
@@ -114,18 +117,12 @@ function onTick()
     end
 end
 
-littleDialogue.registerAnswer("playedBefore",{text = "Yes",addText = "Want to skip the Intro and the Tutorial?<question confirmSkipIntro>"})
-littleDialogue.registerAnswer("playedBefore",{text = "No",chosenFunction = function() hasPlayedBefore = false end})
-
-littleDialogue.registerAnswer("confirmSkipIntro",{text = "Yes",chosenFunction = function() hasPlayedBefore = true end})
-littleDialogue.registerAnswer("confirmSkipIntro",{text = "No",chosenFunction = function() hasPlayedBefore = false end})
-
 function playedBefore()
-    SaveData.introFinished = true
     Level.load("map.lvlx")
 end
 
 function notPlayedBefore()
+    SaveData.hasSeenIntro = true
     Level.load("Intro.lvlx")
 end
 
@@ -136,7 +133,7 @@ function onDraw()
 			image = press_start,
 			x = x2,
 			y = y2,
-			priority = 1,
+			priority = 31,
 			sceneCoords = false,
 			sourceX = 0,
 			sourceY = frame * 32,

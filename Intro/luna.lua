@@ -5,6 +5,15 @@ local littleDialogue = require("littleDialogue")
 local distortionEffects = require("distortionEffects")
 local warpTransition = require("warpTransition")
 
+local pauseplus = require("pauseplus")
+
+pauseplus.canPause = false
+
+local yoshi
+pcall(function() yoshi = require("yiYoshi/yiYoshi") end)
+
+yoshi.introSettings.enabled = false
+
 warpTransition.sameSectionTransition = warpTransition.TRANSITION_PAN
 warpTransition.crossSectionTransition = warpTransition.TRANSITION_FADE
 warpTransition.levelStartTransition = warpTransition.TRANSITION_FADE

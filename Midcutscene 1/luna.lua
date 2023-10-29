@@ -1,6 +1,15 @@
 local animationPal = require("animationPal")
 local cutscenePal = require("cutscenePal")
 
+local pauseplus = require("pauseplus")
+
+pauseplus.canPause = false
+
+local yoshi
+pcall(function() yoshi = require("yiYoshi/yiYoshi") end)
+
+yoshi.introSettings.enabled = false
+
 local littleDialogue = require("littleDialogue")
 local warpTransition = require("warpTransition")
 

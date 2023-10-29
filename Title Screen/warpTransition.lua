@@ -42,8 +42,8 @@ end
 
 local buffer = Graphics.CaptureBuffer(800,600)
 function warpTransition.applyShader(priority,shader,uniforms)
-    buffer:captureAt(priority or 6)
-    Graphics.drawScreen{texture = buffer,priority = priority or 6,shader = shader,uniforms = uniforms}
+    buffer:captureAt(priority or 32)
+    Graphics.drawScreen{texture = buffer,priority = priority or 32,shader = shader,uniforms = uniforms}
 end
 
 
@@ -137,7 +137,7 @@ do
             end
         end
 
-        Graphics.drawScreen{color = Color.black.. opacity,priority = 6}
+        Graphics.drawScreen{color = Color.black.. opacity,priority = 32}
 
 
         return middle
