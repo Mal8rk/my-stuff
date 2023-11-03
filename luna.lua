@@ -18,10 +18,6 @@ hudoverride.visible.lives = false
 hudoverride.visible.coins = false
 hudoverride.visible.score = false
 
-if not GameData.seenTitle and Level.filename() ~= "Title Screen.lvlx" then
-	Level.load("Title Screen.lvlx")
-end
-
 function onStart()
 	player.character = CHARACTER_KLONOA;
 	player.powerup = 1;
